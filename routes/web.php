@@ -1,35 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Booking;
-use App\Models\Menu;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\MenuController; // TAMBAH INI
+use App\Http\Controllers\MenuController;
 
-Route::get('/', function () {
-    return redirect('/dashboard');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index']);
 
-/* DASHBOARD */
-
-Route::get('/dashboard', function () {
-
-    $totalBooking = Booking::count();
-    $bookingHariIni = Booking::whereDate('tanggal_booking', today())->count();
-    $totalMenu = Menu::count();
-
-    return view('dashboard', compact(
-        'totalBooking',
-        'bookingHariIni',
-        'totalMenu'
-    ));
-
-});
-
-/* CRUD BOOKING */
-
+Route::resource('menu', MenuController::class);
 Route::resource('booking', BookingController::class);
-
-/* CRUD MENU */
-
-Route::resource('menu', MenuController::class); // TAMBAH DI SINI

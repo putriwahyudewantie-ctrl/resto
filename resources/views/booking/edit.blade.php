@@ -1,43 +1,105 @@
-<!DOCTYPE html>
-<html>
-<head>
+@extends('layouts.app')
 
-<title>Edit Booking</title>
+@section('content')
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<h2 class="page-title">➕ Tambah Booking</h2>
 
-</head>
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 
-<body class="container mt-5">
+@if($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-<h2>Edit Booking</h2>
+<div class="card table-card">
+    <div class="card-header">
+        Form Tambah Booking
+    </div>
 
-<form action="/booking/{{ $booking->id }}" method="POST">
+    <div class="card-body">
+        <form action="{{ url('/booking') }}" method="POST">
+            @csrf
 
-@csrf
-@method('PUT')
+            <div class="mb-3">
+                <label class="form-label">Nama Pelanggan</label>
+                <input type="text" name="nama_pelanggan" class="form-control" value="{{ old('nama_pelanggan') }}">
+            </div>
 
-<input type="text" name="nama_pelanggan" class="form-control mb-2" value="{{ $booking->nama_pelanggan }}">
+            <div class="mb-3">
+                <label class="form-label">No HP</label>
+                <input type="text" name="no_hp" class="form-control" value="{{ old('no_hp') }}">
+            </div>
 
-<input type="text" name="no_hp" class="form-control mb-2" value="{{ $booking->no_hp }}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Tanggal Booking</label>
+                    <input type="date" name="tanggal_booking" class="form-control" value="{{ old('tanggal_booking') }}">
+                </div>
 
-<input type="date" name="tanggal_booking" class="form-control mb-2" value="{{ $booking->tanggal_booking }}">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Jam Booking</label>
+                    <input type="time" name="jam_booking" class="form-control" value="{{ old('jam_booking') }}">
+                </div>
 
-<input type="time" name="jam_booking" class="form-control mb-2" value="{{ $booking->jam_booking }}">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Jumlah Orang</label>
+                    <input type="number" name="jumlah_orang" class="form-control" value="{{ old('jumlah_orang') }}">
+                </div>
+            </div>
 
-<input type="number" name="jumlah_orang" class="form-control mb-2" value="{{ $booking->jumlah_orang }}">
+            <div class="mb-3">
+                <label class="form-label">Nomor Meja</label>
+                <input type="number" name="nomor_meja" class="form-control" value="{{ old('nomor_meja') }}">
+            </div>
 
-<input type="number" name="nomor_meja" class="form-control mb-2" value="{{ $booking->nomor_meja }}">
+            <div class="mb-3">
+                <label class="form-label">Pilih Menu</label>
+                <div class="row">
+                    @forelse($menus as $menu)
+                        <div class="col-md-4 mb-2">
+                            <div class="form-check border rounded p-3 bg-light">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="menu[]"
+                                    value="{{ $menu->id }}"
+                                    id="menu{{ $menu->id }}"
+                                    {{ in_array($menu->id, old('menu', [])) ? 'checked' : '' }}
+                                >
+                                <label class="form-check-label ms-2" for="menu{{ $menu->id }}">
+                                    <strong>{{ $menu->nama_menu }}</strong><br>
+                                    <small>{{ $menu->kategori }} - Rp {{ number_format($menu->harga, 0, ',', '.') }}</small>
+                                </label>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <div class="alert alert-warning">
+                                Belum ada data menu. Tambahkan menu dulu.
+                            </div>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
 
-<input type="text" name="menu" class="form-control mb-2" value="{{ $booking->menu }}">
+            <div class="mb-3">
+                <label class="form-label">Catatan</label>
+                <textarea name="catatan" class="form-control">{{ old('catatan') }}</textarea>
+            </div>
 
-<textarea name="catatan" class="form-control mb-3">{{ $booking->catatan }}</textarea>
+            <button class="btn btn-success">Simpan</button>
+            <a href="{{ url('/booking') }}" class="btn btn-secondary">Kembali</a>
+        </form>
+    </div>
+</div>
 
-<button class="btn btn-success">
-Update
-</button>
-
-</form>
-
-</body>
-</html>
+@endsection
