@@ -1,0 +1,26 @@
+.menu-card{
+border-radius:15px;
+overflow:hidden;
+transition:0.3s;
+}
+
+.menu-card:hover{
+transform:scale(1.03);
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+.menu-img{
+height:140px;
+object-fit:cover;
+}
+
+.menu-body{
+padding:10px;
+text-align:center;
+}
+
+.qty-input{
+width:70px;
+margin:auto;
+text-align:center;
+}

@@ -1,20 +1,35 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Booking;
+use App\Models\Menu;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\MenuController; // TAMBAH INI
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/dashboard');
 });
+
+/* DASHBOARD */
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    $totalBooking = Booking::count();
+    $bookingHariIni = Booking::whereDate('tanggal_booking', today())->count();
+    $totalMenu = Menu::count();
+
+    return view('dashboard', compact(
+        'totalBooking',
+        'bookingHariIni',
+        'totalMenu'
+    ));
+
 });
 
-require __DIR__.'/auth.php';
+/* CRUD BOOKING */
+
+Route::resource('booking', BookingController::class);
+
+/* CRUD MENU */
+
+Route::resource('menu', MenuController::class); // TAMBAH DI SINI
