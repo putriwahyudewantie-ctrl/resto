@@ -32,3 +32,9 @@ Route::get('/user-dashboard', function() {
 
 // Logout
 Route::get('/logout', [AuthController::class, 'logout']);
+
+use App\Http\Controllers\MejaController;
+
+Route::get('/meja', [MejaController::class, 'index']);
+Route::post('/meja/book/{id}', [MejaController::class, 'book'])->name('meja.book');
+Route::post('/meja/auto-book', [MejaController::class, 'autoBook'])->name('meja.auto');
