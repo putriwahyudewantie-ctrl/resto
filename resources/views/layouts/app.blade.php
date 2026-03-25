@@ -271,6 +271,12 @@
                 <span class="nav-icon">🍜</span>
                 <span>Menu</span>
             </a>
+
+            <li class="nav-item">
+    <a href="{{ url('meja') }}" class="nav-link">
+        🍽️ Meja
+    </a>
+</li>
         </aside>
 
         <main class="main-content">

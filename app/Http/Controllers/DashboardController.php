@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Menu;
 use Carbon\Carbon;
+use App\Models\Meja;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
