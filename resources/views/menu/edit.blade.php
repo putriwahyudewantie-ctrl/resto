@@ -20,13 +20,18 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ url('/menu/'.$menu->id) }}" method="POST">
+        <form action="{{ url('/menu/'.$menu->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
             <div class="mb-3">
                 <label class="form-label">Nama Menu</label>
                 <input type="text" name="nama_menu" class="form-control" value="{{ old('nama_menu', $menu->nama_menu) }}">
+            </div>
+            
+            <div class="mb-3">
+                <label>Foto Menu</label>
+                <input type="file" name="gambar" class="form-control">
             </div>
 
             <div class="mb-3">

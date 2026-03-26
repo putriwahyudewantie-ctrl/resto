@@ -20,12 +20,17 @@
     </div>
 
     <div class="card-body">
-        <form action="{{ url('/menu') }}" method="POST">
+        <form action="{{ url('/menu') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
                 <label class="form-label">Nama Menu</label>
                 <input type="text" name="nama_menu" class="form-control" value="{{ old('nama_menu') }}">
+            </div>
+
+            <div class="mb-3">
+                <label>Foto Menu</label>
+                <input type="file" name="gambar" class="form-control">
             </div>
 
             <div class="mb-3">
