@@ -8,40 +8,46 @@ use Illuminate\Support\Facades\DB;
 
 class MejaController extends Controller
 {
-    // TAMPILKAN DATA MEJA
     public function index()
     {
-        $mejas = Meja::all();
+        $mejas = Meja::orderBy('no_meja', 'asc')->get();
         return view('meja.index', compact('mejas'));
     }
 
-    // BOOKING MANUAL (KLIK TOMBOL)
     public function book($id)
     {
         $meja = Meja::find($id);
 
-        if ($meja && $meja->status == 'tersedia') {
-            $meja->status = 'penuh';
-            $meja->save();
-
-            // MASUK KE BOOKINGS (BIAR MASUK DASHBOARD)
-            DB::table('bookings')->insert([
-                'nama' => 'Manual Booking',
-                'tanggal' => now(),
-                'jam' => now(),
-                'orang' => $meja->kapasitas,
-                'meja_id' => $meja->id,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+        if (!$meja) {
+            return redirect('/meja')->with('error', 'Meja tidak ditemukan!');
         }
+
+        if ($meja->status !== 'tersedia') {
+            return redirect('/meja')->with('error', 'Meja sudah penuh!');
+        }
+
+        $meja->status = 'penuh';
+        $meja->save();
+
+        DB::table('bookings')->insert([
+            'nama'       => 'Manual Booking',
+            'tanggal'    => now()->toDateString(),
+            'jam'        => now()->format('H:i:s'),
+            'orang'      => $meja->kapasitas,
+            'meja_id'    => $meja->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return redirect('/meja')->with('success', 'Meja berhasil dibooking!');
     }
 
-    // AUTO BOOKING (PILIH OTOMATIS)
     public function autoBook(Request $request)
     {
+        $request->validate([
+            'jumlah' => 'required|integer|min:1',
+        ]);
+
         $jumlah = $request->jumlah;
 
         $meja = Meja::where('status', 'tersedia')
@@ -49,36 +55,36 @@ class MejaController extends Controller
             ->orderBy('kapasitas', 'asc')
             ->first();
 
-        if ($meja) {
-            $meja->status = 'penuh';
-            $meja->save();
-
-            // MASUK KE BOOKINGS (BIAR KE DASHBOARD)
-            DB::table('bookings')->insert([
-                'nama' => 'Auto Booking',
-                'tanggal' => now(),
-                'jam' => now(),
-                'orang' => $jumlah,
-                'meja_id' => $meja->id,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            return redirect('/meja')->with('success', 'Meja otomatis dipilih!');
+        if (!$meja) {
+            return redirect('/meja')->with('error', 'Tidak ada meja tersedia untuk jumlah orang tersebut!');
         }
 
-        return redirect('/meja')->with('error', 'Tidak ada meja tersedia!');
+        $meja->status = 'penuh';
+        $meja->save();
+
+        DB::table('bookings')->insert([
+            'nama'       => 'Auto Booking',
+            'tanggal'    => now()->toDateString(),
+            'jam'        => now()->format('H:i:s'),
+            'orang'      => $jumlah,
+            'meja_id'    => $meja->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect('/meja')->with('success', 'Meja otomatis dipilih: Meja No. ' . $meja->no_meja);
     }
 
-    // RESET MEJA (BIAR BISA DIPAKAI LAGI)
     public function reset($id)
     {
         $meja = Meja::find($id);
 
-        if ($meja) {
-            $meja->status = 'tersedia';
-            $meja->save();
+        if (!$meja) {
+            return redirect('/meja')->with('error', 'Meja tidak ditemukan!');
         }
+
+        $meja->status = 'tersedia';
+        $meja->save();
 
         return redirect('/meja')->with('success', 'Meja berhasil direset!');
     }
