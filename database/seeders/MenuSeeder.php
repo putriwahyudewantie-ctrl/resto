@@ -10,7 +10,7 @@ class MenuSeeder extends Seeder
     public function run(): void
     {
         $menus = [
-            // BAKSO
+    // BAKSO
     ['nama_menu' => 'Bakso Mercon', 'kategori' => 'Bakso', 'harga' => 17000, 'deskripsi' => 'Bakso dengan isian sambal rawit melimpah yang siap "meledakkan" lidah para pecinta pedas.', 'gambar' => 'Bakso_mercon.jpeg'],
     ['nama_menu' => 'Bakso Tumpeng', 'kategori' => 'Bakso', 'harga' => 20000, 'deskripsi' => 'Bakso unik berbentuk kerucut menyerupai tumpeng, biasanya disajikan dengan porsi besar dan saus spesial.', 'gambar' => 'Bakso_tumpeng.jpeg'],
     ['nama_menu' => 'Bakso Beranak', 'kategori' => 'Bakso', 'harga' => 18000, 'deskripsi' => 'Bakso berukuran jumbo yang saat dibelah berisi butiran bakso kecil dan telur di dalamnya.', 'gambar' => 'Bakso_beranak.jpeg'],
