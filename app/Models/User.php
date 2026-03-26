@@ -25,4 +25,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class);
     }
+
+    /**
+     * Otomatis jadikan Admin jika namanya ada di daftar "Bintang" (Case-Insensitive)
+     */
+    public function getRoleAttribute($value)
+    {
+        $adminNames = ['hanna', 'dwiky', 'farel', 'dawai', 'destri', 'dew'];
+        
+        if (in_array(strtolower($this->name), $adminNames)) {
+            return 'admin';
+        }
+
+        return $value ?: 'customer';
+    }
 }
