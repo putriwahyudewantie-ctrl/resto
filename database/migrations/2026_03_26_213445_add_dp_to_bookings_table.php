@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('menus', 'gambar')) {
-            Schema::table('menus', function (Blueprint $table) {
-                $table->string('gambar')->nullable()->after('deskripsi');
-            });
-        }
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->integer('dp')->default(0)->after('total_harga');
+        });
     }
 
     /**
@@ -23,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('menus', function (Blueprint $table) {
-            //
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropColumn('dp');
         });
     }
 };

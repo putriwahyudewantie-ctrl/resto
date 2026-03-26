@@ -25,27 +25,28 @@
 
             <div class="mb-3">
                 <label class="form-label">Nama Menu</label>
-                <input type="text" name="nama_menu" class="form-control" value="{{ old('nama_menu') }}">
+                <input type="text" name="nama_menu" class="form-control" value="{{ old('nama_menu') }}" required>
             </div>
 
             <div class="mb-3">
-                <label>Foto Menu</label>
-                <input type="file" name="gambar" class="form-control">
+                <label class="form-label">Foto Menu</label>
+                <input type="file" name="gambar" class="form-control" accept=".jpg,.jpeg,.png,.webp">
+                <small class="text-muted">Format: JPG, JPEG, PNG, WEBP. Maks 2MB.</small>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Kategori</label>
-                <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}">
+                <input type="text" name="kategori" class="form-control" value="{{ old('kategori') }}" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Harga</label>
-                <input type="number" name="harga" class="form-control" value="{{ old('harga') }}">
+                <input type="number" name="harga" class="form-control" value="{{ old('harga') }}" required min="0">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Deskripsi</label>
-                <textarea name="deskripsi" class="form-control">{{ old('deskripsi') }}</textarea>
+                <textarea name="deskripsi" class="form-control" rows="4">{{ old('deskripsi') }}</textarea>
             </div>
 
             <button class="btn btn-success">Simpan</button>

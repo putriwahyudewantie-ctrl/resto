@@ -2,17 +2,18 @@
 
 @section('content')
 
-<h2 class="page-title">➕ Tambah Booking</h2>
+<h2 class="page-title mb-4">✏️ Form Edit Booking</h2>
 
 @if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
+    <div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius:12px;">
+        <span class="fw-bold px-2">🚨 Oops!</span> {{ session('error') }}
     </div>
 @endif
 
 @if($errors->any())
-    <div class="alert alert-danger">
-        <ul class="mb-0">
+    <div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius:12px;">
+        <span class="fw-bold px-2">🚨 Silakan periksa kembali:</span>
+        <ul class="mb-0 mt-2">
             @foreach($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
@@ -20,86 +21,265 @@
     </div>
 @endif
 
-<div class="card table-card">
-    <div class="card-header">
-        Form Tambah Booking
+<div class="card table-card p-2 bg-white rounded-4 shadow-sm border-0">
+    <div class="card-header pb-3 pt-3 bg-transparent border-0">
+        <h5 class="m-0 fw-bold" style="color:#0f2f66;">Update Detail Reservasi (INV-{{ date('Y', strtotime($booking->created_at)) }}{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }})</h5>
+        <small class="text-muted">Edit identitas langganan, jadwal peminjaman meja, atau ubah porsi menu.</small>
     </div>
 
-    <div class="card-body">
-        <form action="{{ url('/booking') }}" method="POST">
+    <div class="card-body px-4 pt-1 pb-4">
+        <form action="{{ url('/booking/'.$booking->id) }}" method="POST">
             @csrf
+            @method('PUT')
 
-            <div class="mb-3">
-                <label class="form-label">Nama Pelanggan</label>
-                <input type="text" name="nama_pelanggan" class="form-control" value="{{ old('nama_pelanggan') }}">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">No HP</label>
-                <input type="text" name="no_hp" class="form-control" value="{{ old('no_hp') }}">
-            </div>
-
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Tanggal Booking</label>
-                    <input type="date" name="tanggal_booking" class="form-control" value="{{ old('tanggal_booking') }}">
+            <!-- IDENTITAS PELANGGAN -->
+            <div class="row g-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label text-secondary fw-semibold">Nama Lengkap Pemesan</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 border" style="border-radius: 12px 0 0 12px;">👤</span>
+                        <input type="text" name="nama_pelanggan" class="form-control border-start-0 ps-1" style="border-radius: 0 12px 12px 0;" value="{{ old('nama_pelanggan', $booking->nama_pelanggan) }}" required>
+                    </div>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Jam Booking</label>
-                    <input type="time" name="jam_booking" class="form-control" value="{{ old('jam_booking') }}">
-                </div>
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Jumlah Orang</label>
-                    <input type="number" name="jumlah_orang" class="form-control" value="{{ old('jumlah_orang') }}">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label text-secondary fw-semibold">Nomor WhatsApp / HP</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 border" style="border-radius: 12px 0 0 12px;">📞</span>
+                        <input type="text" name="no_hp" class="form-control border-start-0 ps-1" style="border-radius: 0 12px 12px 0;" value="{{ old('no_hp', $booking->no_hp) }}" required>
+                    </div>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Nomor Meja</label>
-                <input type="number" name="nomor_meja" class="form-control" value="{{ old('nomor_meja') }}">
+            <!-- DETAIL KEDATANGAN & MEJA -->
+            <div class="p-4 bg-light rounded-4 mb-4 mt-2 border">
+                <div class="row g-3">
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label text-secondary fw-semibold">Tanggal Kedatangan</label>
+                        <input type="date" name="tanggal_booking" class="form-control bg-white fw-bold text-primary" value="{{ old('tanggal_booking', \Carbon\Carbon::parse($booking->tanggal_booking)->format('Y-m-d')) }}">
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label text-secondary fw-semibold">Jam Kedatangan</label>
+                        <input type="time" name="jam_booking" class="form-control bg-white fw-bold text-primary" value="{{ old('jam_booking', \Carbon\Carbon::parse($booking->jam_booking)->format('H:i')) }}">
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label text-secondary fw-semibold">Jumlah Tamu</label>
+                        <div class="input-group">
+                            <input type="number" name="jumlah_orang" class="form-control bg-white fw-bold text-primary" value="{{ old('jumlah_orang', $booking->jumlah_orang) }}" min="1">
+                            <span class="input-group-text bg-white">Orang</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label text-secondary fw-semibold">Pilih Meja</label>
+                        <select name="nomor_meja" class="form-select bg-white fw-bold text-primary">
+                            @foreach($mejas as $meja)
+                                <option value="{{ $meja->no_meja }}" {{ old('nomor_meja', $booking->nomor_meja) == $meja->no_meja ? 'selected' : '' }}>
+                                    No. {{ $meja->no_meja }} (Maks {{ $meja->kapasitas }} org)
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-warning mt-1 d-block"><i class="fa fa-info-circle"></i> Pastikan meja tidak bentrok di jam yang sama.</small>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Pilih Menu</label>
-                <div class="row">
+            <hr class="text-muted opacity-25">
+
+            <!-- PEMILIHAN MENU (DENGAN GAMBAR) -->
+            <div class="mb-4 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold m-0" style="color:#0f2f66;">Update Pesanan Menu</h5>
+                        <small class="text-muted">Anda dapat menambah atau mengurangi porsi di sini.</small>
+                    </div>
+                </div>
+                
+                <div class="row g-3" style="max-height: 500px; overflow-y: auto; overflow-x: hidden; padding: 10px; background: #f8fafc; border-radius:18px; border: 1px solid #e2e8f0;">
                     @forelse($menus as $menu)
-                        <div class="col-md-4 mb-2">
-                            <div class="form-check border rounded p-3 bg-light">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    name="menu[]"
-                                    value="{{ $menu->id }}"
-                                    id="menu{{ $menu->id }}"
-                                    {{ in_array($menu->id, old('menu', [])) ? 'checked' : '' }}
-                                >
-                                <label class="form-check-label ms-2" for="menu{{ $menu->id }}">
-                                    <strong>{{ $menu->nama_menu }}</strong><br>
-                                    <small>{{ $menu->kategori }} - Rp {{ number_format($menu->harga, 0, ',', '.') }}</small>
-                                </label>
+                        @php
+                            // Parsing logika JSON E-Commerce lama dari database
+                            $currentQty = 0;
+                            $pesanans = is_array($booking->menu) ? $booking->menu : [];
+                            foreach($pesanans as $p) {
+                                if (is_array($p) && isset($p['id']) && $p['id'] == $menu->id) {
+                                    $currentQty = $p['qty'];
+                                    break;
+                                } elseif (!is_array($p) && $p == $menu->id) {
+                                    $currentQty = 1; // Fallback data lama (checkbox array ID flat)
+                                    break;
+                                }
+                            }
+                            $oldQty = old('menu.'.$menu->id, $currentQty);
+                        @endphp
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="card h-100 border-0 shadow-sm" id="menu_card_{{ $menu->id }}" style="position: relative; border-radius:14px; transition: all 0.2s ease; overflow:hidden; {{ $oldQty > 0 ? 'background: #f0f7ff; box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; transform: translateY(-4px);' : 'background: #fff;' }}">
+                                
+                                <input type="hidden" name="menu[{{ $menu->id }}]" id="qty_input_{{ $menu->id }}" value="{{ $oldQty }}" data-harga="{{ $menu->harga }}">
+
+                                <!-- Gambar -->
+                                <div style="position:relative; width: 100%; padding-top: 65%;">
+                                    <img src="{{ asset('images/menu/' . $menu->gambar) }}" class="card-img-top" alt="{{ $menu->nama_menu }}"
+                                         style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; transition: all 0.2s ease; {{ $oldQty > 0 ? 'opacity: 0.85;' : '' }}"
+                                         id="menu_img_{{ $menu->id }}"
+                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->nama_menu) }}&background=0f2f66&color=fff&size=200&bold=true';">
+                                    <div style="position:absolute; bottom:0; left:0; width:100%; height:40%; background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);"></div>
+                                    <span class="badge position-absolute shadow-sm" style="bottom: 10px; left: 10px; background: rgba(255,255,255,0.9); color: #0f2f66; font-weight:700;">{{ $menu->kategori }}</span>
+                                </div>
+                                
+                                <!-- Body -->
+                                <div class="card-body p-3 d-flex flex-column justify-content-between" style="background: transparent;">
+                                    <div>
+                                        <h6 class="fw-bold mb-1" style="color: #0f2f66; font-size:15px; line-height:1.3;">{{ $menu->nama_menu }}</h6>
+                                        <p class="text-muted mb-2" style="font-size:12px; line-height:1.4;">{{ \Illuminate\Support\Str::limit($menu->deskripsi, 40) }}</p>
+                                    </div>
+                                    
+                                    <!-- Harga & Tombol QTY Counter (+ / -) -->
+                                    <div class="d-flex justify-content-between align-items-center mt-2 border-top pt-2">
+                                        <div class="fw-bold" style="color: #059669; font-size:14px;">
+                                            Rp {{ number_format($menu->harga, 0, ',', '.') }}
+                                        </div>
+                                        <div class="d-flex align-items-center rounded-pill border shadow-sm" style="background:#fff; border-color:#e2e8f0;">
+                                            <button type="button" class="btn btn-sm fw-bold d-flex align-items-center justify-content-center" 
+                                                    style="width:28px; height:28px; padding:0; border:none; background:transparent; color:#64748b; font-size:16px;" 
+                                                    onclick="updateQty({{ $menu->id }}, -1)">−</button>
+                                            
+                                            <span class="fw-bold fs-6 mx-1 text-center" style="min-width: 22px; color:#0f2f66;" id="qty_display_{{ $menu->id }}">
+                                                {{ $oldQty }}
+                                            </span>
+                                            
+                                            <button type="button" class="btn btn-sm fw-bold d-flex align-items-center justify-content-center" 
+                                                    style="width:28px; height:28px; padding:0; border:none; background:transparent; color:#3b82f6; font-size:16px;" 
+                                                    onclick="updateQty({{ $menu->id }}, 1)">+</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @empty
-                        <div class="col-12">
-                            <div class="alert alert-warning">
-                                Belum ada data menu. Tambahkan menu dulu.
-                            </div>
+                        <div class="col-12 py-5 text-center">
+                            <h1 style="opacity:0.2;">🍽️</h1>
+                            <p class="text-muted mb-0">Wah, admin belum menambahkan data menu apa-apa di database.</p>
                         </div>
                     @endforelse
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Catatan</label>
-                <textarea name="catatan" class="form-control">{{ old('catatan') }}</textarea>
+            <!-- CATATAN KHUSUS & PEMBAYARAN DP -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <label class="form-label text-secondary fw-semibold">Pesan Khusus (Opsional)</label>
+                    <textarea name="catatan" class="form-control" rows="3" placeholder="Contoh: Tolong sediakan kursi bayi (high chair) untuk 1 anak..." style="border-radius:12px; background:#f8fafc;">{{ old('catatan', $booking->catatan) }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold" style="color:#0f2f66;">Uang Muka (DP) Minimal - <span class="text-danger badge bg-light border">Wajib Min Rp 100k</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius:12px 0 0 12px; font-weight:600;">Rp</span>
+                        <input type="number" name="dp" id="dp_input" class="form-control fw-bold" placeholder="100000" value="{{ old('dp', $booking->dp) }}" min="100000" required
+                               style="border-radius:0 12px 12px 0; background:#fff9f9; color:#b91c1c; border: 1px solid #fecaca;">
+                    </div>
+                    <div class="alert alert-danger mt-3 p-3 border-0 shadow-sm" style="font-size:13px; border-radius:12px; background:#fff1f2; color:#be123c; line-height: 1.6;">
+                        <strong>⚠️ Update Pembayaran:</strong> <br>
+                        <i class="fa fa-caret-right me-1"></i> Jika Anda merubah pesanan, deposit DP minimal tetap <b>Rp 100.000</b>.<br>
+                        <i class="fa fa-caret-right me-1"></i> Pastikan nominal DP Anda sudah sesuai dengan yang telah ditransfer ke <b>BCA 123-456-789 (a.n RestoKu)</b>.
+                    </div>
+                </div>
             </div>
 
-            <button class="btn btn-success">Simpan</button>
-            <a href="{{ url('/booking') }}" class="btn btn-secondary">Kembali</a>
+            <!-- LIVE PRICE CALCULATOR -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="p-4 bg-white rounded-4 shadow-sm border" style="border-left: 5px solid #059669 !important;">
+                        <h6 class="fw-bold mb-3 text-secondary"><i class="fa fa-calculator"></i> Estimasi Tagihan Perubahan:</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Harga Menu:</span>
+                            <span class="fw-bold fs-5" style="color:#0f2f66;" id="live_total_harga">Rp 0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-danger">
+                            <span>Uang Muka (DP):</span>
+                            <span class="fw-bold" id="live_dp_display">- Rp 0</span>
+                        </div>
+                        <hr class="opacity-25 my-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Sisa Pelunasan:</span>
+                            <span class="fw-bold fs-3" style="color:#059669;" id="live_sisa_bayar">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOMBOL SIMPAN -->
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-warning text-white px-4 py-2" style="font-size:16px; border-radius:10px;">💾 Simpan Perubahan Booking</button>
+                <a href="{{ url('/booking') }}" class="btn btn-light px-4 py-2 border shadow-sm" style="border-radius:10px;">Batal</a>
+            </div>
         </form>
     </div>
 </div>
+
+<script>
+    function updateQty(id, change) {
+        let input = document.getElementById('qty_input_' + id);
+        let display = document.getElementById('qty_display_' + id);
+        let card = document.getElementById('menu_card_' + id);
+        let img = document.getElementById('menu_img_' + id);
+        
+        let currentQty = parseInt(input.value) || 0;
+        let newQty = currentQty + change;
+        
+        if (newQty < 0) newQty = 0;
+        if (newQty > 100) newQty = 100;
+        
+        input.value = newQty;
+        display.innerText = newQty;
+        
+        if (newQty > 0) {
+            card.style.background = '#f0f7ff';
+            card.style.transform = 'translateY(-4px)';
+            card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+            img.style.opacity = '0.85';
+        } else {
+            card.style.background = '#fff';
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 .125rem .25rem a(0,0,0,.075)';
+            img.style.opacity = '1';
+        }
+
+        // Jalankan Kalkulasi Live
+        calculateLiveTotal();
+    }
+
+    function calculateLiveTotal() {
+        let totalMenuDuit = 0;
+        let qtyInputs = document.querySelectorAll('input[name^="menu["]');
+        qtyInputs.forEach(input => {
+            let qty = parseInt(input.value) || 0;
+            let harga = parseInt(input.getAttribute('data-harga')) || 0;
+            if (qty > 0) {
+                totalMenuDuit += (qty * harga);
+            }
+        });
+
+        let dpInput = document.getElementById('dp_input');
+        let dp = parseInt(dpInput.value) || 0;
+        
+        let sisa = totalMenuDuit - dp;
+        if (sisa < 0) sisa = 0;
+
+        document.getElementById('live_total_harga').innerText = 'Rp ' + totalMenuDuit.toLocaleString('id-ID');
+        document.getElementById('live_dp_display').innerText = '- Rp ' + dp.toLocaleString('id-ID');
+        document.getElementById('live_sisa_bayar').innerText = 'Rp ' + sisa.toLocaleString('id-ID');
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        calculateLiveTotal();
+        let dpInput = document.getElementById('dp_input');
+        if(dpInput) {
+            dpInput.addEventListener('input', calculateLiveTotal);
+        }
+    });
+</script>
 
 @endsection

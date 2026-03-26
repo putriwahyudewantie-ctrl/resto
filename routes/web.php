@@ -10,21 +10,21 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::middleware('auth')->group(function () {
-    // Dashboard
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Booking
-    Route::resource('booking', BookingController::class);
-
-    // Menu
-    Route::resource('menu', MenuController::class);
-
-    // Meja
+    // Booking Routes (Semua user bisa CRUD booking miliknya sendiri)
+    Route::resource('booking', BookingController::class)->except(['destroy']);
     Route::get('/meja', [MejaController::class, 'index'])->name('meja.index');
-    Route::post('/meja/book/{id}', [MejaController::class, 'book'])->name('meja.book');
-    Route::post('/meja/auto-book', [MejaController::class, 'autoBook'])->name('meja.auto');
-    Route::post('/meja/reset/{id}', [MejaController::class, 'reset'])->name('meja.reset');
+
+    // Admin Only: Delete Booking & Update Status
+    Route::middleware(['admin'])->group(function () {
+        Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->name('booking.destroy');
+        Route::patch('/booking/{id}/status', [BookingController::class, 'updateStatus']);
+        
+        // Admin Only: Data Menu
+        Route::resource('menu', MenuController::class);
+    });
 });
 
 require __DIR__.'/auth.php';

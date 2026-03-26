@@ -9,6 +9,9 @@ class MenuSeeder extends Seeder
 {
     public function run(): void
     {
+        // Hapus semua data lama sebelum seeding ulang
+        \App\Models\Menu::truncate();
+
         $menus = [
     // BAKSO
     ['nama_menu' => 'Bakso Mercon', 'kategori' => 'Bakso', 'harga' => 17000, 'deskripsi' => 'Bakso dengan isian sambal rawit melimpah yang siap "meledakkan" lidah para pecinta pedas.', 'gambar' => 'Bakso_mercon.jpeg'],
@@ -51,6 +54,27 @@ class MenuSeeder extends Seeder
     ['nama_menu' => 'Nasi Ikan Nila Bakar', 'kategori' => 'Nasi', 'harga' => 25000, 'deskripsi' => 'Ikan nila segar yang dibakar dengan olesan kecap rempah, memberikan rasa manis dan gurih.', 'gambar' => 'nasi_ikan_nila_bakar.jpeg'],
     ['nama_menu' => 'Nasi Ayam Goreng', 'kategori' => 'Nasi', 'harga' => 18000, 'deskripsi' => 'Menu favorit sejuta umat; ayam goreng renyah yang disajikan dengan nasi putih dan sambal korek.', 'gambar' => 'nasi_ayam_goreng.jpeg'],
     ['nama_menu' => 'Nasi Ikan Nila Goreng', 'kategori' => 'Nasi', 'harga' => 22000, 'deskripsi' => 'Ikan nila yang digoreng garing hingga renyah di luar namun tetap lembut di dalam.', 'gambar' => 'nasi_ikan_nila_goreng.jpg'],
+    
+    // SEAFOOD
+    ['nama_menu' => 'Kepiting Saus Padang', 'kategori' => 'Seafood', 'harga' => 85000, 'deskripsi' => 'Kepiting utuh segar yang dimasak bumbu padang super pedas.', 'gambar' => 'kepiting_padang.jpeg'],
+    ['nama_menu' => 'Udang Bakar Madu', 'kategori' => 'Seafood', 'harga' => 45000, 'deskripsi' => 'Sate udang ukuran besar dengan baluran saus madu manis.', 'gambar' => 'udang_bakar.jpeg'],
+    ['nama_menu' => 'Cumi Goreng Tepung', 'kategori' => 'Seafood', 'harga' => 35000, 'deskripsi' => 'Cincin cumi yang digoreng krispi dengan cocolan saus tartar.', 'gambar' => 'cumi_tepung.jpeg'],
+    ['nama_menu' => 'Kerang Hijau Saus Tiram', 'kategori' => 'Seafood', 'harga' => 30000, 'deskripsi' => 'Sajian kerang hijau basah dengan bumbu tiram gurih manis.', 'gambar' => 'kerang_hijau.jpeg'],
+    ['nama_menu' => 'Gurame Asam Manis', 'kategori' => 'Seafood', 'harga' => 65000, 'deskripsi' => 'Ikan gurame filet goreng renyah disiram saus nanas asam manis.', 'gambar' => 'gurame_asam.jpeg'],
+
+    // CEMILAN / SNACK
+    ['nama_menu' => 'Kentang Goreng', 'kategori' => 'Snack', 'harga' => 15000, 'deskripsi' => 'French fries renyah bertabur garam laut dan parmesan.', 'gambar' => 'kentang.jpeg'],
+    ['nama_menu' => 'Pisang Bakar Coklat Keju', 'kategori' => 'Snack', 'harga' => 18000, 'deskripsi' => 'Pisang kepok panggang dengan limpahan topping meses dan keju Cheddar.', 'gambar' => 'pisang_bakar.jpeg'],
+    ['nama_menu' => 'Lumpia Kulit Tahu', 'kategori' => 'Snack', 'harga' => 20000, 'deskripsi' => 'Olahan ikan cincang dibalut kulit tahu krispi khas Chinese food.', 'gambar' => 'lumpia_tahu.jpeg'],
+    ['nama_menu' => 'Roti Bakar Kaya', 'kategori' => 'Snack', 'harga' => 18000, 'deskripsi' => 'Roti panggang tradisional dengan olesan selai srikaya legit dan mentega lapis.', 'gambar' => 'roti_kaya.jpeg'],
+    ['nama_menu' => 'Tahu Crispy Cabai Garam', 'kategori' => 'Snack', 'harga' => 15000, 'deskripsi' => 'Potongan tahu goreng tepung garing dengan taburan rempah cabai bawang gurih pedas.', 'gambar' => 'tahu_crispy.jpeg'],
+    // MINUMAN (Tambahan 6 menu untuk total 36)
+    ['nama_menu' => 'Es Teh Manis', 'kategori' => 'Minuman', 'harga' => 5000, 'deskripsi' => 'Teh melati manis khas rumahan yang disajikan dengan es batu segar dingin.', 'gambar' => 'es_teh.jpeg'],
+    ['nama_menu' => 'Es Jeruk', 'kategori' => 'Minuman', 'harga' => 7000, 'deskripsi' => 'Perasan jeruk peras asli manis segar, kaya akan vitamin C.', 'gambar' => 'es_jeruk.jpeg'],
+    ['nama_menu' => 'Kopi Hitam', 'kategori' => 'Minuman', 'harga' => 8000, 'deskripsi' => 'Kopi tubruk murni khas warkop, diseduh panas pekat memanggil kantuk untuk pergi.', 'gambar' => 'kopi_hitam.jpeg'],
+    ['nama_menu' => 'Teh Tarik', 'kategori' => 'Minuman', 'harga' => 12000, 'deskripsi' => 'Campuran teh dan susu kental manis, ditarik berulang hingga berbusa tebal lembut.', 'gambar' => 'teh_tarik.jpeg'],
+    ['nama_menu' => 'Jus Alpukat', 'kategori' => 'Minuman', 'harga' => 15000, 'deskripsi' => 'Jus alpukat mentega segar dengan kental manis cokelat di dinding gelas keramik.', 'gambar' => 'jus_alpukat.jpeg'],
+    ['nama_menu' => 'Soda Gembira', 'kategori' => 'Minuman', 'harga' => 14000, 'deskripsi' => 'Paduan sirup frambozen klasik dengan susu dan air soda yang meletup-letup ceria.', 'gambar' => 'soda_gembira.jpeg'],
         ];
 
         foreach ($menus as $menu) {

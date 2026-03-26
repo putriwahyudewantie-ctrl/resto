@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasColumn('menus', 'gambar')) {
-            Schema::table('menus', function (Blueprint $table) {
-                $table->string('gambar')->nullable()->after('deskripsi');
-            });
-        }
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->after('id')->constrained('users')->onDelete('cascade');
+        });
     }
 
     /**
@@ -23,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('menus', function (Blueprint $table) {
-            //
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('user_id');
         });
     }
 };

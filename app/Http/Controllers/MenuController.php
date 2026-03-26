@@ -2,29 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Menu;
-use Illuminate\Support\Facades\File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil kategori dari klik tombol (misal: ?category=Bakso)
-        $category = $request->get('category');
+        $query = Menu::query();
 
-        // Jika ada kategori yang dipilih, saring datanya
-        if ($category) {
-            $menus = Menu::where('kategori', $category)->get();
-        } else {
-            // Jika tidak ada filter, tampilkan semua
-            $menus = Menu::all();
+        // Search nama menu
+        if ($request->filled('search')) {
+            $query->where('nama_menu', 'like', '%' . $request->search . '%');
         }
 
-        // Ambil daftar kategori unik untuk tombol-tombol filternya
-        $categories = Menu::select('kategori')->distinct()->get();
+        // Filter kategori
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
 
-        return view('menu.index', compact('menus', 'categories'));
+        $menus = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
+        $kategoriList = Menu::select('kategori')
+            ->distinct()
+            ->orderBy('kategori')
+            ->pluck('kategori');
+
+        return view('menu.index', compact('menus', 'kategoriList'));
     }
 
     public function create()
@@ -35,27 +40,28 @@ class MenuController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_menu' => 'required|string|max:100',
-            'kategori'  => 'required|string|max:50',
-            'harga'     => 'required|numeric|min:0',
-            'deskripsi' => 'nullable|string',
-            'gambar'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Tambahkan validasi gambar
+            'nama_menu'  => 'required|string|max:255',
+            'kategori'   => 'required|string|max:100',
+            'harga'      => 'required|numeric|min:0',
+            'deskripsi'  => 'nullable|string',
+            'gambar'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // Gunakan $validated sebagai dasar data
-        $data = $validated;
+        $namaFile = null;
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
-            $nama_gambar = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/menu'), $nama_gambar);
-            
-            // Masukkan nama gambar ke dalam array $data
-            $data['gambar'] = $nama_gambar;
+            $namaFile = time() . '_' . preg_replace('/\s+/', '_', $file->getClientOriginalName());
+            $file->move(public_path('images/menu'), $namaFile);
         }
 
-        // SIMPAN MENGGUNAKAN $data, BUKAN $validated
-        Menu::create($data);
+        Menu::create([
+            'nama_menu' => $validated['nama_menu'],
+            'kategori' => $validated['kategori'],
+            'harga' => $validated['harga'],
+            'deskripsi' => $validated['deskripsi'] ?? null,
+            'gambar' => $namaFile,
+        ]);
 
         return redirect('/menu')->with('success', 'Menu berhasil ditambahkan');
     }
@@ -71,32 +77,33 @@ class MenuController extends Controller
         $menu = Menu::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_menu' => 'required|string|max:100',
-            'kategori'  => 'required|string|max:50',
-            'harga'     => 'required|numeric|min:0',
-            'deskripsi' => 'nullable|string',
-            'gambar'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'nama_menu'  => 'required|string|max:255',
+            'kategori'   => 'required|string|max:100',
+            'harga'      => 'required|numeric|min:0',
+            'deskripsi'  => 'nullable|string',
+            'gambar'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $data = $validated;
+        $namaFile = $menu->gambar;
 
         if ($request->hasFile('gambar')) {
-            // Hapus foto lama jika ada agar folder tidak penuh sampah
-            if ($menu->gambar) {
-                $oldPath = public_path('images/menu/' . $menu->gambar);
-                if (File::exists($oldPath)) {
-                    File::delete($oldPath);
-                }
+            // hapus gambar lama kalau ada
+            if ($menu->gambar && file_exists(public_path('images/menu/' . $menu->gambar))) {
+                unlink(public_path('images/menu/' . $menu->gambar));
             }
 
             $file = $request->file('gambar');
-            $nama_gambar = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/menu'), $nama_gambar);
-            $data['gambar'] = $nama_gambar;
+            $namaFile = time() . '_' . preg_replace('/\s+/', '_', $file->getClientOriginalName());
+            $file->move(public_path('images/menu'), $namaFile);
         }
 
-        // UPDATE MENGGUNAKAN $data
-        $menu->update($data);
+        $menu->update([
+            'nama_menu' => $validated['nama_menu'],
+            'kategori' => $validated['kategori'],
+            'harga' => $validated['harga'],
+            'deskripsi' => $validated['deskripsi'] ?? null,
+            'gambar' => $namaFile,
+        ]);
 
         return redirect('/menu')->with('success', 'Menu berhasil diupdate');
     }
@@ -105,19 +112,12 @@ class MenuController extends Controller
     {
         $menu = Menu::findOrFail($id);
 
-    // Cek apakah menu ini punya gambar
-    if ($menu->gambar) {
-        $path = public_path('images/menu/' . $menu->gambar);
-        
-        // Hapus file fisiknya dari folder public/images/menu
-        if (File::exists($path)) {
-            File::delete($path);
+        if ($menu->gambar && file_exists(public_path('images/menu/' . $menu->gambar))) {
+            unlink(public_path('images/menu/' . $menu->gambar));
         }
-    }
 
-    // Baru hapus datanya dari database
-    $menu->delete();
+        $menu->delete();
 
-    return redirect()->route('menu.index')->with('success', 'Menu dan fotonya berhasil dihapus!');
+        return redirect('/menu')->with('success', 'Menu berhasil dihapus');
     }
 }

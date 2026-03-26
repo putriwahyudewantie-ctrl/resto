@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     protected $fillable = [
+        'user_id',
         'nama_pelanggan',
         'no_hp',
         'tanggal_booking',
@@ -15,9 +16,17 @@ class Booking extends Model
         'nomor_meja',
         'menu',
         'catatan',
+        'status',
+        'total_harga',
+        'dp',
     ];
 
     protected $casts = [
         'menu' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
