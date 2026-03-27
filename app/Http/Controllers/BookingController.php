@@ -14,7 +14,7 @@ class BookingController extends Controller
         $query = Booking::orderBy('tanggal_booking', 'desc')
             ->orderBy('jam_booking', 'desc');
 
-        // Jika bukan admin, hanya tampilkan booking milik sendiri
+        // Admin bisa melihat semua, Customer hanya milik sendiri
         if (auth()->check() && auth()->user()->role !== 'admin') {
             $query->where('user_id', auth()->id());
         }
