@@ -16,7 +16,8 @@
             justify-content: center;
             background: #0a1628;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            padding: 40px 0;
         }
 
         /* Animated background */
