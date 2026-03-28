@@ -4,11 +4,29 @@
 
 <div class="container-fluid px-4">
 
-    <h2 class="page-title mb-3">📅 Data Booking</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title mb-0"><i class="fas fa-history me-2 text-primary"></i> Data Booking</h2>
+        <a href="{{ url('/booking/create') }}" class="btn btn-primary shadow-sm px-4 rounded-pill">
+            <i class="fas fa-plus-circle me-2"></i>Tambah Reservasi
+        </a>
+    </div>
 
-    <a href="{{ url('/booking/create') }}" class="btn btn-primary mb-3">
-        + Tambah Booking
-    </a>
+    {{-- FEATURE UAS: SEARCH --}}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form action="{{ url('/booking') }}" method="GET" class="row g-2">
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Cari nama pelanggan, nomor HP, atau nomor meja..." value="{{ request('search') }}">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">Filter Sekarang</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -16,9 +34,8 @@
         </div>
     @endif
 
-    <div class="card shadow-sm">
-        <div class="card-header fw-bold">
-            Daftar Booking Restoran
+        <div class="card-header bg-white py-3 border-0">
+            <i class="fas fa-table me-2"></i> Log Aktivitas Booking
         </div>
 
         <div class="card-body">
@@ -149,8 +166,8 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center py-5">
-                                    <div style="font-size: 40px; opacity: 0.3;">📋</div>
-                                    <b class="text-muted">Belum ada satupun reservasi / jadwal booking terdaftar.</b>
+                                <i class="fas fa-inbox text-muted d-block mb-3" style="font-size: 3rem;"></i>
+                                <b class="text-muted">Tidak menemukan data booking sesuai pencarian.</b>
                                 </td>
                             </tr>
                         @endforelse
@@ -158,6 +175,9 @@
 
                 </table>
             </div>
+        </div>
+        <div class="card-footer bg-white border-0 py-3">
+            {{ $bookings->appends(request()->query())->links('vendor.pagination.bootstrap-5') }}
         </div>
     </div>
 

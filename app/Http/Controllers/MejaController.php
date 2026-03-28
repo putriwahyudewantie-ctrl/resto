@@ -34,4 +34,46 @@ class MejaController extends Controller
 
         return view('meja.index', compact('mejas', 'tanggal', 'jam', 'bookedMejaNos'));
     }
+
+    public function create()
+    {
+        return view('meja.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'no_meja' => 'required|integer|unique:mejas,no_meja',
+            'kapasitas' => 'required|integer|min:1',
+            'status' => 'required|in:Tersedia,Maintenance',
+        ]);
+
+        Meja::create($validated);
+
+        return redirect()->route('meja.index')->with('success', 'Meja berhasil ditambahkan.');
+    }
+
+    public function edit(Meja $meja)
+    {
+        return view('meja.edit', compact('meja'));
+    }
+
+    public function update(Request $request, Meja $meja)
+    {
+        $validated = $request->validate([
+            'no_meja' => 'required|integer|unique:mejas,no_meja,' . $meja->id,
+            'kapasitas' => 'required|integer|min:1',
+            'status' => 'required|in:Tersedia,Maintenance',
+        ]);
+
+        $meja->update($validated);
+
+        return redirect()->route('meja.index')->with('success', 'Data meja berhasil perbarui.');
+    }
+
+    public function destroy(Meja $meja)
+    {
+        $meja->delete();
+        return redirect()->route('meja.index')->with('success', 'Meja berhasil dihapus.');
+    }
 }

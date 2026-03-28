@@ -1,55 +1,50 @@
 @if ($paginator->hasPages())
-<nav aria-label="Pagination" class="resto-pagination-wrapper">
-    <ul class="resto-pagination">
+    <nav class="d-flex justify-content-between align-items-center mt-5">
+        <div class="small fw-bold text-muted">
+            Menampilkan <span class="text-dark">{{ $paginator->firstItem() }}</span> – <span class="text-dark">{{ $paginator->lastItem() }}</span> dari <span class="text-primary">{{ $paginator->total() }}</span> Menu
+        </div>
 
-        {{-- Previous --}}
-        @if ($paginator->onFirstPage())
-            <li class="resto-page-item disabled">
-                <span class="resto-page-link">‹ Prev</span>
-            </li>
-        @else
-            <li class="resto-page-item">
-                <a class="resto-page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev">‹ Prev</a>
-            </li>
-        @endif
-
-        {{-- Page Numbers --}}
-        @foreach ($elements as $element)
-            @if (is_string($element))
-                <li class="resto-page-item disabled">
-                    <span class="resto-page-link">{{ $element }}</span>
+        <ul class="pagination pagination-rounded mb-0 gap-1 d-flex list-unstyled">
+            {{-- Previous Page Link --}}
+            @if ($paginator->onFirstPage())
+                <li class="page-item disabled" aria-disabled="true">
+                    <span class="page-link border-0 shadow-sm rounded-3 px-3"><i class="fas fa-chevron-left me-1"></i> Prev</span>
+                </li>
+            @else
+                <li class="page-item">
+                    <a class="page-link border-0 shadow-sm rounded-3 px-3 text-dark" href="{{ $paginator->previousPageUrl() }}" rel="prev"><i class="fas fa-chevron-left me-1"></i> Prev</a>
                 </li>
             @endif
 
-            @if (is_array($element))
-                @foreach ($element as $page => $url)
-                    @if ($page == $paginator->currentPage())
-                        <li class="resto-page-item active">
-                            <span class="resto-page-link">{{ $page }}</span>
-                        </li>
-                    @else
-                        <li class="resto-page-item">
-                            <a class="resto-page-link" href="{{ $url }}">{{ $page }}</a>
-                        </li>
-                    @endif
-                @endforeach
+            {{-- Pagination Elements --}}
+            @foreach ($elements as $element)
+                {{-- "Three Dots" Separator --}}
+                @if (is_string($element))
+                    <li class="page-item disabled" aria-disabled="true"><span class="page-link border-0">{{ $element }}</span></li>
+                @endif
+
+                {{-- Array Of Links --}}
+                @if (is_array($element))
+                    @foreach ($element as $page => $url)
+                        @if ($page == $paginator->currentPage())
+                            <li class="page-item active" aria-current="page"><span class="page-link border-0 shadow rounded-3 px-3 bg-primary text-white">{{ $page }}</span></li>
+                        @else
+                            <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 px-3 text-dark" href="{{ $url }}">{{ $page }}</a></li>
+                        @endif
+                    @endforeach
+                @endif
+            @endforeach
+
+            {{-- Next Page Link --}}
+            @if ($paginator->hasMorePages())
+                <li class="page-item">
+                    <a class="page-link border-0 shadow-sm rounded-3 px-3 text-dark" href="{{ $paginator->nextPageUrl() }}" rel="next">Next <i class="fas fa-chevron-right ms-1"></i></a>
+                </li>
+            @else
+                <li class="page-item disabled" aria-disabled="true">
+                    <span class="page-link border-0 shadow-sm rounded-3 px-3 text-muted">Next <i class="fas fa-chevron-right ms-1"></i></span>
+                </li>
             @endif
-        @endforeach
-
-        {{-- Next --}}
-        @if ($paginator->hasMorePages())
-            <li class="resto-page-item">
-                <a class="resto-page-link" href="{{ $paginator->nextPageUrl() }}" rel="next">Next ›</a>
-            </li>
-        @else
-            <li class="resto-page-item disabled">
-                <span class="resto-page-link">Next ›</span>
-            </li>
-        @endif
-
-    </ul>
-    <div class="resto-pagination-info">
-        Menampilkan {{ $paginator->firstItem() }}–{{ $paginator->lastItem() }} dari {{ $paginator->total() }} menu
-    </div>
-</nav>
+        </ul>
+    </nav>
 @endif

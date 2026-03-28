@@ -9,17 +9,24 @@ use App\Models\Meja;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $query = Booking::orderBy('tanggal_booking', 'desc')
             ->orderBy('jam_booking', 'desc');
+
+        // Feature UAS: Search
+        if ($request->has('search')) {
+            $query->where('nama_pelanggan', 'like', '%' . $request->search . '%')
+                  ->orWhere('no_hp', 'like', '%' . $request->search . '%')
+                  ->orWhere('nomor_meja', 'like', '%' . $request->search . '%');
+        }
 
         // Admin bisa melihat semua, Customer hanya milik sendiri
         if (auth()->check() && auth()->user()->role !== 'admin') {
             $query->where('user_id', auth()->id());
         }
 
-        $bookings = $query->get();
+        $bookings = $query->paginate(10);
         $allMenus = Menu::pluck('nama_menu', 'id');
 
         return view('booking.index', compact('bookings', 'allMenus'));
