@@ -187,8 +187,8 @@
                                     <td>
                                         @if($booking->status === 'Dikonfirmasi')
                                             <span class="badge bg-success-subtle text-success">Confirmed</span>
-                                        @elseif($booking->status === 'Menunggu')
-                                            <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                        @elseif($booking->status === 'Pending' || $booking->status === 'Menunggu' || $booking->status === 'Dibatalkan')
+                                            <span class="badge bg-warning text-dark px-2 py-1 shadow-sm"><i class="fas fa-clock fs-xs me-1"></i>Pending</span>
                                         @else
                                             <span class="badge bg-danger-subtle text-danger">Cancelled</span>
                                         @endif

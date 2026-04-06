@@ -27,6 +27,10 @@
         <small class="text-muted">Isi identitas, konfirmasi jam, dan pilih menu lezat kami (opsional).</small>
     </div>
 
+    <div class="alert alert-info mx-3 mt-2 mb-1 border-0 shadow-sm" style="background-color: #e0f2fe; color: #0369a1; border-radius: 12px; font-size:14px;">
+        <i class="fas fa-info-circle me-1"></i> <strong>Catatan:</strong> Durasi pemakaian meja maksimal adalah 2 jam per sesi dari jam kedatangan Anda.
+    </div>
+
     <div class="card-body px-4 pt-1 pb-4">
         <form action="{{ url('/booking') }}" method="POST">
             @csrf

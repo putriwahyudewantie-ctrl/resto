@@ -19,6 +19,10 @@
     </div>
 @endif
 
+<div class="alert alert-info mt-3 shadow-sm border-0" style="background-color: #e0f2fe; color: #0369a1; border-radius: 12px;">
+    <i class="fas fa-info-circle me-2"></i> <strong>Catatan:</strong> Durasi pemakaian meja maksimal adalah 2 jam per sesi.
+</div>
+
 <!-- Filter Form -->
 <div class="filter-box">
     <form method="GET" action="{{ url('/meja') }}">

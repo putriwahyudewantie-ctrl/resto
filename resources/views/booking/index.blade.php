@@ -114,9 +114,9 @@
 
                                 <td class="text-center">
                                     @if($booking->status == 'Selesai')
-                                        <span class="badge bg-secondary p-2 d-block w-100"><i class="fa fa-check-circle"></i> Selesai / Lunas</span>
-                                    @elseif($booking->status == 'Dibatalkan')
-                                        <span class="badge bg-danger p-2 d-block w-100">Dibatalkan</span>
+                                        <span class="badge bg-success p-2 d-block w-100"><i class="fa fa-check-circle"></i> Selesai / Lunas</span>
+                                    @elseif($booking->status == 'Pending' || $booking->status == 'Dibatalkan')
+                                        <span class="badge bg-warning text-dark p-2 d-block w-100 shadow-sm mb-2"><i class="fa fa-clock"></i> Pending (Menunggu)</span>
                                     @else
                                         <span class="badge bg-warning text-dark p-2 d-block w-100 mb-2 shadow-sm">Menunggu Kedatangan</span>
                                         
@@ -125,7 +125,7 @@
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status" value="Selesai">
-                                            <button class="btn btn-outline-success btn-sm w-100 fw-bold shadow-sm" onclick="return confirm('Tandai tamu ini sudah selesai dan tagihan lunas?')">
+                                            <button class="btn btn-primary btn-sm w-100 fw-bold shadow-sm" onclick="return confirm('Tandai tamu ini sudah selesai dan tagihan lunas?')">
                                                 Tandai Selesai
                                             </button>
                                         </form>
@@ -145,7 +145,7 @@
                                             <i class="fa fa-edit"></i>
                                         </a>
                                         @else
-                                        <button class="btn btn-light btn-sm text-muted d-flex align-items-center justify-content-center" style="width:32px; height:32px; padding:0;" disabled title="Sudah Selesai (E-Kunci)">
+                                        <button class="btn btn-secondary btn-sm text-white d-flex align-items-center justify-content-center" style="width:32px; height:32px; padding:0; background-color: #4b5563; border-color: #4b5563;" disabled title="Sudah Selesai (E-Kunci)">
                                             <i class="fa fa-lock"></i>
                                         </button>
                                         @endif
