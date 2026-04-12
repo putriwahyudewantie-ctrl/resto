@@ -32,11 +32,23 @@ class User extends Authenticatable
     public function getRoleAttribute($value)
     {
         $adminNames = ['hanna', 'dwiky', 'farel', 'dawai', 'destri', 'dew'];
+        $nameLower = strtolower($this->name);
         
-        if (in_array(strtolower($this->name), $adminNames)) {
+        // Cek Admin
+        if (in_array($nameLower, $adminNames)) {
             return 'admin';
         }
 
-        return $value ?: 'customer';
+        // Otomatis jadikan Dapur jika ada unsur kata "dapur" di namanya (contoh: dew dapur)
+        if (strpos($nameLower, 'dapur') !== false) {
+            return 'dapur';
+        }
+
+        // Kalau diatur dari panel admin (database)
+        if (in_array($value, ['admin', 'dapur', 'customer'])) {
+            return $value;
+        }
+
+        return 'customer';
     }
 }

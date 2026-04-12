@@ -26,6 +26,21 @@ class BookingController extends Controller
             $query->where('user_id', auth()->id());
         }
 
+        // AUTO-CANCEL LOGIC (UAS Feature):
+        // Jika ada booking 'Pending' yang sudah lewat hari/jam-nya hari ini,
+        // otomatis ubah status jadi 'Dibatalkan'.
+        $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
+        
+        Booking::where('status', 'Pending')
+            ->where(function($q) use ($sekarang) {
+                $q->where('tanggal_booking', '<', $sekarang->format('Y-m-d'))
+                  ->orWhere(function($q2) use ($sekarang) {
+                      $q2->where('tanggal_booking', $sekarang->format('Y-m-d'))
+                         ->where('jam_booking', '<', $sekarang->format('H:i'));
+                  });
+            })
+            ->update(['status' => 'Dibatalkan']);
+
         $bookings = $query->paginate(10);
         $allMenus = Menu::pluck('nama_menu', 'id');
 
@@ -42,6 +57,19 @@ class BookingController extends Controller
         $selectedJumlahOrang = $request->jumlah_orang;
         $selectedTanggal = $request->tanggal_booking;
         $selectedJam = $request->jam_booking;
+
+        // Validasi Anti-Time-Travel di layar Form Booking GET
+        if ($selectedTanggal && $selectedJam) {
+            $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
+            $tglBooking = \Carbon\Carbon::parse($selectedTanggal);
+            $jamMasuk = \Carbon\Carbon::parse($selectedJam);
+
+            if ($tglBooking->copy()->startOfDay()->lt($sekarang->copy()->startOfDay())) {
+                return redirect('/meja')->with('error', 'Tanggal tidak valid! Hari sudah lewat.');
+            } elseif ($tglBooking->copy()->startOfDay()->equalTo($sekarang->copy()->startOfDay()) && $jamMasuk->format('H:i') < $sekarang->format('H:i')) {
+                return redirect('/meja')->with('error', 'Waktu tidak valid! Jam yang dipilih sudah lewat hari ini.');
+            }
+        }
 
         return view('booking.create', compact(
             'menus',
@@ -68,8 +96,23 @@ class BookingController extends Controller
             'dp'               => 'required|numeric|min:100000',
         ]);
 
-        // SMART ANTI-BENTROK LOGIC (Durasi Standar Meja: 2 Jam)
+        $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
+        $tglBooking = \Carbon\Carbon::parse($validated['tanggal_booking']);
         $jamMasuk = \Carbon\Carbon::parse($validated['jam_booking']);
+
+        // Cegah booking di masa lalu
+        if ($tglBooking->copy()->startOfDay()->lt($sekarang->copy()->startOfDay())) {
+            return back()->withInput()->with('error', 'Tanggal tidak valid! Anda tidak bisa melakukan reservasi untuk hari yang sudah lewat.');
+        }
+
+        // Jika booking hari ini, cegah jam yang sudah berlalu
+        if ($tglBooking->copy()->startOfDay()->equalTo($sekarang->copy()->startOfDay())) {
+            if ($jamMasuk->format('H:i') < $sekarang->format('H:i')) {
+                return back()->withInput()->with('error', 'Waktu tidak valid! Anda tidak bisa melakukan reservasi untuk jam yang sudah berlalu.');
+            }
+        }
+
+        // SMART ANTI-BENTROK LOGIC (Durasi Standar Meja: 2 Jam)
         $jamBatasBawah = $jamMasuk->copy()->subHours(2)->format('H:i');
 
         $cekBooking = Booking::where('tanggal_booking', $validated['tanggal_booking'])
@@ -176,7 +219,22 @@ class BookingController extends Controller
             'dp'               => 'required|numeric|min:100000',
         ]);
 
+        $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
+        $tglBooking = \Carbon\Carbon::parse($validated['tanggal_booking']);
         $jamMasuk = \Carbon\Carbon::parse($validated['jam_booking']);
+
+        // Cegah booking di masa lalu
+        if ($tglBooking->copy()->startOfDay()->lt($sekarang->copy()->startOfDay())) {
+            return back()->withInput()->with('error', 'Tanggal tidak valid! Anda tidak bisa melakukan reservasi untuk hari yang sudah lewat.');
+        }
+
+        // Jika booking hari ini, cegah jam yang sudah berlalu
+        if ($tglBooking->copy()->startOfDay()->equalTo($sekarang->copy()->startOfDay())) {
+            if ($jamMasuk->format('H:i') < $sekarang->format('H:i')) {
+                return back()->withInput()->with('error', 'Waktu tidak valid! Anda tidak bisa melakukan reservasi untuk jam yang sudah berlalu.');
+            }
+        }
+
         $jamBatasBawah = $jamMasuk->copy()->subHours(2)->format('H:i');
 
         $cekBooking = Booking::where('tanggal_booking', $validated['tanggal_booking'])

@@ -16,23 +16,36 @@ class MejaController extends Controller
         $mejas = Meja::orderBy('no_meja', 'asc')->get();
         
         $bookedMejaNos = [];
-        if ($tanggal && $jam) {
-            $jamMasuk = \Carbon\Carbon::parse($jam);
-            $jamBatasBawah = $jamMasuk->copy()->subHours(2)->format('H:i');
-            $jamBatasAtas = $jamMasuk->copy()->addHours(1)->addMinutes(59)->format('H:i');
+        $errorTime = null;
 
-            $bookedMejaNos = Booking::whereDate('tanggal_booking', $tanggal)
-                ->where(function ($query) use ($jamBatasBawah, $jamBatasAtas) {
-                    $query->whereBetween('jam_booking', [$jamBatasBawah, $jamBatasAtas]);
-                })
-                ->where(function($q) {
-                    $q->whereNull('status');
-                    $q->orWhere('status', '!=', 'Selesai');
-                })
-                ->pluck('nomor_meja')->toArray();
+        if ($tanggal && $jam) {
+            $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
+            $tglBooking = \Carbon\Carbon::parse($tanggal);
+            $jamMasuk = \Carbon\Carbon::parse($jam);
+
+            if ($tglBooking->copy()->startOfDay()->lt($sekarang->copy()->startOfDay())) {
+                $errorTime = 'Tanggal tidak valid! Hari sudah lewat.';
+                $bookedMejaNos = reset($mejas) ? $mejas->pluck('no_meja')->toArray() : [];
+            } elseif ($tglBooking->copy()->startOfDay()->equalTo($sekarang->copy()->startOfDay()) && $jamMasuk->format('H:i') < $sekarang->format('H:i')) {
+                $errorTime = 'Cek Ketersediaan Gagal: Waktu tidak valid! Anda tidak bisa memesan untuk jam yang sudah lewat hari ini.';
+                $bookedMejaNos = reset($mejas) ? $mejas->pluck('no_meja')->toArray() : [];
+            } else {
+                $jamBatasBawah = $jamMasuk->copy()->subHours(2)->format('H:i');
+                $jamBatasAtas = $jamMasuk->copy()->addHours(1)->addMinutes(59)->format('H:i');
+
+                $bookedMejaNos = Booking::whereDate('tanggal_booking', $tanggal)
+                    ->where(function ($query) use ($jamBatasBawah, $jamBatasAtas) {
+                        $query->whereBetween('jam_booking', [$jamBatasBawah, $jamBatasAtas]);
+                    })
+                    ->where(function($q) {
+                        $q->whereNull('status');
+                        $q->orWhere('status', '!=', 'Selesai');
+                    })
+                    ->pluck('nomor_meja')->toArray();
+            }
         }
 
-        return view('meja.index', compact('mejas', 'tanggal', 'jam', 'bookedMejaNos'));
+        return view('meja.index', compact('mejas', 'tanggal', 'jam', 'bookedMejaNos', 'errorTime'));
     }
 
     public function create()

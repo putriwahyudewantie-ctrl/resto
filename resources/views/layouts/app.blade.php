@@ -8,78 +8,227 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
+        /* ===== COLOR PALETTE (Consistent Warm Navy) ===== */
+        :root {
+            --primary:       #1e3a5f;   /* Navy utama */
+            --primary-light: #2c5282;   /* Navy terang */
+            --accent:        #e67e22;   /* Oranye aksen */
+            --accent-light:  #f39c12;   /* Kuning-oranye */
+            --bg-page:       #f0f4f8;
+            --bg-sidebar:    #1a2e4a;   /* Navy sidebar */
+            --text-muted:    #64748b;
+            --border:        #e2e8f0;
+        }
+
         /* Base styles */
-        body { margin: 0; font-family: 'Inter', sans-serif; background: #f0f4f8; color: #1e293b; overflow-x: hidden; scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-page); color: #1e293b; overflow-x: hidden; scroll-behavior: smooth; }
         .app-wrapper { display: flex; min-height: 100vh; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar { 
+            width: 270px; 
+            background: var(--bg-sidebar); 
+            color: white; 
+            padding: 28px 18px; 
+            display: flex; 
+            flex-direction: column; 
+            position: sticky; 
+            top: 0; 
+            height: 100vh; 
+            z-index: 1000; 
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15); 
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; margin-bottom: 35px; padding: 0 6px; }
+        .brand-icon { 
+            width: 42px; height: 42px; 
+            background: var(--accent); 
+            border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 18px; color: white; 
+            box-shadow: 0 4px 12px rgba(230,126,34,0.4);
+        }
+        .brand-name { font-size: 18px; font-weight: 800; color: white; letter-spacing: -0.3px; }
+        .brand-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
+
+        .nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 700; padding: 0 10px; margin: 20px 0 8px; }
         
-        /* Sidebar */
-        .sidebar { width: 280px; background: #0f172a; color: white; padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
-        .brand-box { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; }
-        .nav-link { display: flex; align-items: center; gap: 12px; color: #94a3b8; text-decoration: none; padding: 12px 18px; border-radius: 12px; margin-bottom: 5px; transition: all 0.3s; font-weight: 500; }
-        .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-link.active { background: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .nav-link { 
+            display: flex; align-items: center; gap: 11px; color: #94a3b8; 
+            text-decoration: none; padding: 11px 14px; border-radius: 10px; 
+            margin-bottom: 3px; transition: all 0.25s; font-weight: 500; font-size: 14px;
+        }
+        .nav-link:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
+        .nav-link.active { 
+            background: var(--accent); 
+            color: white; 
+            box-shadow: 0 4px 14px rgba(230,126,34,0.35); 
+        }
+        .nav-link .nav-icon { width: 20px; text-align: center; font-size: 15px; }
 
-        /* Main Content */
-        .main-content { flex: 1; display: flex; flex-direction: column; background: #f8fafc; }
-        .top-navbar { height: 75px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 40px; }
-        .content-area { padding: 40px; flex: 1; }
-        .main-footer { padding: 25px 40px; background: white; border-top: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 14px; }
+        /* ===== MAIN CONTENT ===== */
+        .main-content { flex: 1; display: flex; flex-direction: column; background: var(--bg-page); }
+        
+        .top-navbar { 
+            height: 68px; 
+            background: white; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; 
+            padding: 0 36px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            position: sticky; top: 0; z-index: 900;
+        }
+        .top-navbar .page-breadcrumb {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .top-navbar .page-breadcrumb i { color: var(--accent); }
 
-        /* UI Components */
+        .content-area { padding: 36px; flex: 1; }
+        .main-footer { 
+            padding: 30px 36px; 
+            background: var(--bg-sidebar); 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            color: rgba(255,255,255,0.7); 
+            font-size: 13px; 
+            font-weight: 500;
+        }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; }
+        .footer-brand { color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; font-size: 14px; }
+        .footer-heart { color: #f87171; display: inline-block; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; margin-left: 20px; transition: color 0.2s; }
+        .footer-links a:hover { color: white; }
+
+        /* ===== UI Components ===== */
         .table-card { border: none; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; margin-top: 20px; }
-        .card-header { background: #0f172a !important; color: white !important; font-weight: 700; padding: 20px 25px !important; border: none; display: flex; justify-content: space-between; align-items: center; }
-        .card-header a { color: #3b82f6 !important; text-decoration: none; font-size: 13px; font-weight: 600; }
-        
-        /* Pagination Modern Styling - FORCE HORIZONTAL */
-        nav[role="navigation"] { margin-top: 30px; display: block; overflow: hidden; }
-        ul.pagination, .pagination ul { 
-            display: flex !important; 
-            flex-direction: row !important;
-            list-style: none !important; 
-            padding: 0 !important; 
-            margin: 0 !important;
-            gap: 10px !important; 
+        .card-header { 
+            background: var(--primary) !important; 
+            color: white !important; 
+            font-weight: 700; 
+            padding: 18px 24px !important; 
+            border: none; 
+            display: flex; justify-content: space-between; align-items: center; 
         }
-        li.page-item, .pagination li { 
-            list-style: none !important; 
-            display: inline-block !important;
-            margin: 0 !important;
-        }
-        li.page-item .page-link, .pagination li a, .pagination li span { 
-            border-radius: 12px !important; 
-            border: 1.5px solid #e2e8f0 !important; 
-            color: #0f172a !important; 
-            padding: 10px 18px !important; 
-            font-weight: 700 !important; 
-            text-decoration: none !important; 
-            transition: all 0.2s; 
-            display: flex !important;
+        .card-header a { color: var(--accent-light) !important; text-decoration: none; font-size: 13px; font-weight: 600; }
+
+        .page-title { 
+            font-size: 24px; 
+            font-weight: 800; 
+            color: var(--primary); 
+            letter-spacing: -0.5px; 
+            margin-bottom: 25px;
+            display: flex;
             align-items: center;
-            background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            gap: 12px;
+        }
+        .page-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--border), transparent);
+            margin-left: 10px;
+        }
+
+        .form-label { font-size: 13px; color: #475569; font-weight: 600; margin-bottom: 8px; }
+        .filter-box .form-label { color: white !important; opacity: 1; }
+
+        /* Pagination */
+        nav[role="navigation"] { margin-top: 28px; display: block; }
+        ul.pagination, .pagination ul { 
+            display: flex !important; flex-direction: row !important;
+            list-style: none !important; padding: 0 !important; margin: 0 !important; gap: 8px !important; 
+        }
+        li.page-item, .pagination li { list-style: none !important; display: inline-block !important; margin: 0 !important; }
+        li.page-item .page-link, .pagination li a, .pagination li span { 
+            border-radius: 10px !important; border: 1.5px solid var(--border) !important; 
+            color: var(--primary) !important; padding: 9px 16px !important; font-weight: 700 !important; 
+            text-decoration: none !important; transition: all 0.2s; display: flex !important; align-items: center;
+            background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
         li.page-item.active .page-link, .pagination li.active a, .pagination li.active span { 
-            background: #3b82f6 !important; 
-            color: white !important; 
-            border-color: #3b82f6 !important; 
-            box-shadow: 0 6px 15px rgba(59,130,246,0.3) !important;
+            background: var(--accent) !important; color: white !important; 
+            border-color: var(--accent) !important; box-shadow: 0 5px 14px rgba(230,126,34,0.3) !important;
         }
         li.page-item.disabled .page-link, .pagination li.disabled a, .pagination li.disabled span {
-            opacity: 0.5;
-            background: #f8fafc !important;
-            cursor: not-allowed;
+            opacity: 0.5; background: #f8fafc !important; cursor: not-allowed;
         }
 
-        /* Banner & Button Refinements */
-        .top-banner { margin-bottom: 30px; }
-        .btn-light.rounded-pill { padding: 10px 24px; font-weight: 700; color: #0f172a; border: 1px solid #e2e8f0; }
-        
+        /* ===== PROFILE DROPDOWN ===== */
+        .profile-trigger {
+            display: flex; align-items: center; gap: 10px;
+            cursor: pointer; padding: 8px 14px; border-radius: 12px;
+            transition: background 0.2s; border: none; background: transparent;
+            position: relative;
+        }
+        .profile-trigger:hover { background: #f1f5f9; }
+        .profile-avatar {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 800; color: white;
+            box-shadow: 0 4px 10px rgba(30,58,95,0.25);
+            flex-shrink: 0;
+        }
+        .profile-info { text-align: left; }
+        .profile-info .profile-name { font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.2; }
+        .profile-info .profile-role { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+        .profile-chevron { font-size: 11px; color: var(--text-muted); margin-left: 4px; transition: transform 0.25s; }
+
+        .profile-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 0;
+            background: white; border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+            border: 1px solid var(--border);
+            min-width: 230px;
+            opacity: 0; visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.25s cubic-bezier(.25,.8,.25,1);
+            z-index: 9999;
+        }
+        .profile-dropdown.show {
+            opacity: 1; visibility: visible; transform: translateY(0);
+        }
+        .dropdown-header-info { padding: 16px 18px; border-bottom: 1px solid var(--border); }
+        .dropdown-header-info .dh-avatar {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 12px; font-size: 20px; font-weight: 800; color: white;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(30,58,95,0.2);
+        }
+        .dropdown-header-info .dh-name { font-size: 14px; font-weight: 700; color: #1e293b; }
+        .dropdown-header-info .dh-email { font-size: 12px; color: var(--text-muted); }
+        .dropdown-header-info .dh-badge { 
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-top: 6px;
+        }
+        .badge-admin { background: #fef3c7; color: #92400e; }
+        .badge-customer { background: #ede9fe; color: #5b21b6; }
+        .badge-dapur { background: #fce7f3; color: #9d174d; }
+
+        .dropdown-action-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 18px; color: #374151; font-size: 13px; font-weight: 500;
+            text-decoration: none; transition: background 0.15s;
+        }
+        .dropdown-action-link:hover { background: #f8fafc; color: var(--accent); }
+        .dropdown-action-link i { width: 18px; text-align: center; color: var(--text-muted); }
+        .dropdown-action-link:hover i { color: var(--accent); }
+        .dropdown-divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+        .dropdown-action-link.danger { color: #dc2626; }
+        .dropdown-action-link.danger:hover { background: #fff1f1; }
+        .dropdown-action-link.danger i { color: #dc2626; }
+
         @media (max-width: 991px) {
-            .sidebar { width: 80px; padding: 20px 10px; }
+            .sidebar { width: 72px; padding: 18px 8px; }
             .sidebar .nav-link span:not(.nav-icon) { display: none; }
-            .brand-box span, .nav-section { display: none; }
-            .top-navbar { padding: 0 20px; }
-            .content-area { padding: 20px; }
+            .brand-box span, .nav-section, .brand-sub { display: none; }
+            .top-navbar { padding: 0 18px; }
+            .content-area { padding: 18px; }
+            .profile-info { display: none; }
         }
     </style>
 </head>
@@ -87,41 +236,53 @@
     <div class="app-wrapper">
         <aside class="sidebar">
             <div class="brand-box">
-                <i class="fas fa-utensils fa-2x text-primary"></i>
-                <span class="fs-4 fw-bold">Resto App</span>
+                <div class="brand-icon"><i class="fas fa-utensils"></i></div>
+                <div>
+                    <div class="brand-name">Resto App</div>
+                    <div class="brand-sub">Management System</div>
+                </div>
             </div>
-            
-            <div class="nav-section text-uppercase small opacity-50 mb-3 fw-bold">Main Menu</div>
+
+            <div class="nav-section">Main Menu</div>
             <a href="{{ url('/dashboard') }}" class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}">
                 <span class="nav-icon"><i class="fas fa-th-large"></i></span>
                 <span>Dashboard</span>
             </a>
-            <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
-                <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
-                <span>Reservasi</span>
-            </a>
-            <a href="{{ url('/meja') }}" class="nav-link {{ request()->is('meja*') ? 'active' : '' }}">
-                <span class="nav-icon"><i class="fas fa-chair"></i></span>
-                <span>Meja</span>
-            </a>
-            <a href="{{ url('/menu') }}" class="nav-link {{ request()->is('menu*') ? 'active' : '' }}">
-                <span class="nav-icon"><i class="fas fa-utensils"></i></span>
-                <span>Menu</span>
-            </a>
-            
+
+            {{-- Dapur hanya lihat pesanan --}}
+            @if(Auth::user()->role === 'dapur')
+                <a href="{{ url('/dapur/pesanan') }}" class="nav-link {{ request()->is('dapur*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-fire-burner"></i></span>
+                    <span>Pesanan Masuk</span>
+                </a>
+            @else
+                <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+                    <span>Reservasi</span>
+                </a>
+                <a href="{{ url('/meja') }}" class="nav-link {{ request()->is('meja*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-chair"></i></span>
+                    <span>Meja</span>
+                </a>
+                <a href="{{ url('/menu') }}" class="nav-link {{ request()->is('menu*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-utensils"></i></span>
+                    <span>Menu</span>
+                </a>
+            @endif
+
             {{-- User Management for Admin Only --}}
             @if(Auth::user()->role === 'admin')
-            <div class="nav-section text-uppercase small opacity-50 my-3 fw-bold">System</div>
+            <div class="nav-section">System</div>
             <a href="{{ url('/users') }}" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
                 <span class="nav-icon"><i class="fas fa-users-cog"></i></span>
                 <span>User Management</span>
             </a>
             @endif
-            
+
             <div class="sidebar-bottom mt-auto">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="nav-link border-0 w-100 text-start bg-transparent text-danger">
+                    <button type="submit" class="nav-link border-0 w-100 text-start bg-transparent" style="color: #ef4444;">
                         <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
                         <span>Logout</span>
                     </button>
@@ -131,11 +292,65 @@
 
         <main class="main-content">
             <header class="top-navbar">
-                <div class="fw-bold text-dark fs-5">{{ ucfirst(Request::segment(1) ?? 'Dashboard') }}</div>
+                <div class="page-breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span style="color:#cbd5e1;">/</span>
+                    <span style="color:#1e293b; font-weight:600;">
+                        @php
+                            $seg = Request::segment(1) ?? 'dashboard';
+                            $labels = ['dashboard' => 'Dashboard', 'booking' => 'Reservasi', 'menu' => 'Menu', 'meja' => 'Meja', 'users' => 'User Management', 'dapur' => 'Dapur – Pesanan Masuk', 'profile' => 'Profil Saya'];
+                        @endphp
+                        {{ $labels[$seg] ?? ucfirst($seg) }}
+                    </span>
+                </div>
+
                 <div class="ms-auto d-flex align-items-center gap-3">
-                    <span class="text-muted small">{{ now()->format('d M Y') }}</span>
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    <span class="text-muted small" style="font-size:12px;"><i class="fas fa-calendar-day me-1"></i>{{ now()->translatedFormat('d F Y') }}</span>
+
+                    {{-- Profile Dropdown --}}
+                    <div style="position:relative;" id="profileContainer">
+                        <button class="profile-trigger" id="profileTrigger" onclick="toggleProfile()">
+                            <div class="profile-avatar">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <div class="profile-info">
+                                <div class="profile-name">{{ Auth::user()->name }}</div>
+                                <div class="profile-role">
+                                    @if(Auth::user()->role === 'admin') 🛡️ Administrator
+                                    @elseif(Auth::user()->role === 'dapur') 👨‍🍳 Staff Dapur
+                                    @else 👤 Customer
+                                    @endif
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-down profile-chevron" id="profileChevron"></i>
+                        </button>
+
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="dropdown-header-info">
+                                <div class="dh-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                                <div class="dh-name">{{ Auth::user()->name }}</div>
+                                <div class="dh-email">{{ Auth::user()->email }}</div>
+                                <div>
+                                    @if(Auth::user()->role === 'admin')
+                                        <span class="dh-badge badge-admin"><i class="fas fa-shield-alt"></i> Administrator</span>
+                                    @elseif(Auth::user()->role === 'dapur')
+                                        <span class="dh-badge badge-dapur"><i class="fas fa-fire-burner"></i> Staff Dapur</span>
+                                    @else
+                                        <span class="dh-badge badge-customer"><i class="fas fa-user"></i> Customer</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <a href="{{ route('profile.edit') }}" class="dropdown-action-link">
+                                <i class="fas fa-user-edit"></i> Edit Profil
+                            </a>
+                            <hr class="dropdown-divider">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-action-link danger w-100 border-0 bg-transparent text-start" style="font-family:inherit;">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -145,11 +360,42 @@
             </div>
 
             <footer class="main-footer">
-                &copy; 2026 <strong>Resto App</strong>. Built with ❤️ for UAS Project.
+                <div class="footer-content">
+                    <div class="footer-left">
+                        <span class="footer-brand">Resto App</span> &copy; 2026. <span class="d-none d-md-inline">Sistem Manajemen Terpadu.</span>
+                    </div>
+                    <div class="footer-right d-flex align-items-center">
+                        <div class="d-none d-lg-block me-3">
+                            Developed with <i class="fas fa-heart footer-heart"></i> for UAS Project
+                        </div>
+                        <div class="footer-links">
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-whatsapp"></i></a>
+                            <a href="#">Privacy</a>
+                        </div>
+                    </div>
+                </div>
             </footer>
         </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleProfile() {
+            const dropdown = document.getElementById('profileDropdown');
+            const chevron  = document.getElementById('profileChevron');
+            dropdown.classList.toggle('show');
+            chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+        }
+        // Tutup kalau klik di luar
+        document.addEventListener('click', function(e) {
+            const container = document.getElementById('profileContainer');
+            const dropdown = document.getElementById('profileDropdown');
+            if (!container.contains(e.target)) {
+                dropdown.classList.remove('show');
+                document.getElementById('profileChevron').style.transform = 'rotate(0)';
+            }
+        });
+    </script>
 </body>
 </html>

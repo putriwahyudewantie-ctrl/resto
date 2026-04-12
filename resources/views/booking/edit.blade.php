@@ -56,7 +56,7 @@
                 <div class="row g-3">
                     <div class="col-md-3 mb-2">
                         <label class="form-label text-secondary fw-semibold">Tanggal Kedatangan</label>
-                        <input type="date" name="tanggal_booking" class="form-control bg-white fw-bold text-primary" value="{{ old('tanggal_booking', \Carbon\Carbon::parse($booking->tanggal_booking)->format('Y-m-d')) }}">
+                        <input type="date" name="tanggal_booking" class="form-control bg-white fw-bold text-primary" value="{{ old('tanggal_booking', \Carbon\Carbon::parse($booking->tanggal_booking)->format('Y-m-d')) }}" min="{{ date('Y-m-d') }}">
                     </div>
 
                     <div class="col-md-3 mb-2">

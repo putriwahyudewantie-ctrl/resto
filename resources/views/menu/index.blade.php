@@ -4,11 +4,13 @@
 
 <div class="container-fluid px-4">
 
-    <h2 class="page-title mb-3">🍜 Data Menu</h2>
-
-    <a href="{{ url('/menu/create') }}" class="btn btn-primary mb-3">
-        + Tambah Menu
-    </a>
+    @if(Auth::user()->role === 'admin')
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url('/menu/create') }}" class="btn shadow-sm px-4" style="background:#e67e22; color:white; font-weight:700; border-radius:10px;">
+            <i class="fas fa-plus-circle me-1"></i> Tambah Menu
+        </a>
+    </div>
+    @endif
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -92,19 +94,23 @@
                                 </td>
                                 <td>Rp {{ number_format($menu->harga, 0, ',', '.') }}</td>
                                 <td style="font-size: 13px; color: #475569;">{{ $menu->deskripsi }}</td>
+                                @if(Auth::user()->role === 'admin')
                                 <td>
-                                    <a href="{{ url('/menu/'.$menu->id.'/edit') }}" class="btn btn-warning btn-sm" style="color: #fff; font-weight: bold;">
-                                        Edit
+                                    <a href="{{ url('/menu/'.$menu->id.'/edit') }}" class="btn btn-sm mb-1" style="background:#f59e0b; color:white; font-weight:700;">
+                                        <i class="fas fa-edit me-1"></i>Edit
                                     </a>
 
                                     <form action="{{ url('/menu/'.$menu->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Yakin hapus menu ini?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm shadow-sm" style="font-weight: bold; cursor:pointer;">
-                                            <i class="fa fa-trash me-1"></i> Delete
+                                            <i class="fa fa-trash me-1"></i> Hapus
                                         </button>
                                     </form>
                                 </td>
+                                @else
+                                <td class="text-center text-muted" style="font-size:12px;">—</td>
+                                @endif
                             </tr>
                         @empty
                             <tr>

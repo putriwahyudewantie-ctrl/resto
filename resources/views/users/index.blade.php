@@ -1,26 +1,55 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="top-banner">
-    <div>
-        <h2><i class="fas fa-users me-2"></i>Manajemen User</h2>
-        <p>Kelola akses akun dan otorisasi pengguna sistem</p>
-    </div>
-</div>
 
-<div class="card table-card shadow-lg border-0 mt-4">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Daftar Pengguna Terdaftar</h5>
-        <span class="badge bg-primary text-white">{{ count($users) }} Account</span>
+<style>
+    .user-avatar {
+        width: 42px; height: 42px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; font-weight: 800; color: white;
+        flex-shrink: 0;
+    }
+    .role-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    }
+    .role-admin    { background: #fef9c3; color: #92400e; border: 1px solid #fde68a; }
+    .role-dapur    { background: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+    .role-customer { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+    .role-select {
+        font-size: 12px; font-weight: 600; border-radius: 8px;
+        padding: 4px 8px; border: 1.5px solid #e2e8f0; color: #1e293b;
+        background: #f8fafc; cursor: pointer;
+    }
+    .role-select:focus { border-color: #e67e22; outline: none; box-shadow: 0 0 0 2px rgba(230,126,34,0.15); }
+</style>
+
+@if(session('success'))
+    <div class="alert alert-success border-0 rounded-3 shadow-sm mb-4">
+        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div class="alert alert-danger border-0 rounded-3 shadow-sm mb-4">
+        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+    </div>
+@endif
+
+<div class="card table-card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="fas fa-list me-2"></i>Daftar Pengguna Terdaftar</h5>
+        <span class="role-badge" style="background:#e67e22; color:white; border:none;">{{ count($users) }} Akun</span>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4">Nama</th>
+                        <th class="ps-4" style="width:35%;">Pengguna</th>
                         <th>Email</th>
-                        <th>Role</th>
+                        <th>Role Saat Ini</th>
+                        <th class="text-center">Ubah Role</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -28,36 +57,63 @@
                     @foreach($users as $user)
                     <tr>
                         <td class="ps-4">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="user-avatar" style="background: linear-gradient(135deg, #1e3a5f, #e67e22);">
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
-                                <span class="fw-bold">{{ $user->name }}</span>
+                                <div>
+                                    <div class="fw-bold" style="color:#1e293b;">{{ $user->name }}</div>
+                                    @if($user->id === auth()->id())
+                                        <span style="font-size:10px; color:#e67e22; font-weight:700;">● Anda</span>
+                                    @endif
+                                </div>
                             </div>
                         </td>
-                        <td>{{ $user->email }}</td>
+
+                        <td style="color:#64748b;">{{ $user->email }}</td>
+
                         <td>
                             @if($user->role === 'admin')
-                                <span class="badge bg-danger rounded-pill px-3 shadow-sm">
-                                    <i class="fas fa-shield-alt me-1"></i> Admin
-                                </span>
+                                <span class="role-badge role-admin"><i class="fas fa-shield-alt"></i> Admin</span>
+                            @elseif($user->role === 'dapur')
+                                <span class="role-badge role-dapur"><i class="fas fa-fire-burner"></i> Dapur</span>
                             @else
-                                <span class="badge bg-info text-white rounded-pill px-3 shadow-sm">
-                                    <i class="fas fa-user me-1"></i> Customer
-                                </span>
+                                <span class="role-badge role-customer"><i class="fas fa-user"></i> Customer</span>
                             @endif
                         </td>
+
                         <td class="text-center">
                             @if($user->id !== auth()->id())
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Hapus user ini permanent?')">
+                                <form action="{{ route('users.updateRole', $user->id) }}" method="POST" class="d-inline-flex align-items-center gap-2">
+                                    @csrf
+                                    @method('PATCH')
+                                    <select name="role" class="role-select">
+                                        <option value="customer" {{ $user->role === 'customer' ? 'selected' : '' }}>👤 Customer</option>
+                                        <option value="dapur"    {{ $user->role === 'dapur'    ? 'selected' : '' }}>👨‍🍳 Dapur</option>
+                                        <option value="admin"    {{ $user->role === 'admin'    ? 'selected' : '' }}>🛡️ Admin</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm" style="background:#1e3a5f; color:white; font-weight:700; border-radius:8px; padding:4px 12px;"
+                                        onclick="return confirm('Ubah role {{ $user->name }}?')">
+                                        Simpan
+                                    </button>
+                                </form>
+                            @else
+                                <span class="text-muted small">—</span>
+                            @endif
+                        </td>
+
+                        <td class="text-center">
+                            @if($user->id !== auth()->id())
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                    onsubmit="return confirm('Hapus user {{ $user->name }} secara permanen?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger border-2 rounded-circle shadow-sm" style="width: 35px; height: 35px;" title="Hapus User">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-2 rounded-2" title="Hapus User">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
                             @else
-                                <span class="badge bg-secondary text-white shadow-sm">
+                                <span class="badge bg-secondary text-white">
                                     <i class="fas fa-lock me-1"></i> (Anda)
                                 </span>
                             @endif
@@ -69,4 +125,5 @@
         </div>
     </div>
 </div>
+
 @endsection

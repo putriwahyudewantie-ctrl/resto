@@ -4,9 +4,8 @@
 
 <div class="container-fluid px-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title mb-0"><i class="fas fa-history me-2 text-primary"></i> Data Booking</h2>
-        <a href="{{ url('/booking/create') }}" class="btn btn-primary shadow-sm px-4 rounded-pill">
+    <div class="d-flex justify-content-end align-items-center mb-4">
+        <a href="{{ url('/booking/create') }}" class="btn shadow-sm px-4 rounded-pill" style="background:#e67e22; color:white; font-weight:700;">
             <i class="fas fa-plus-circle me-2"></i>Tambah Reservasi
         </a>
     </div>
@@ -34,8 +33,9 @@
         </div>
     @endif
 
-        <div class="card-header bg-white py-3 border-0">
-            <i class="fas fa-table me-2"></i> Log Aktivitas Booking
+    <div class="card table-card border-0 shadow-sm mb-4">
+        <div class="card-header border-0 py-3" style="background: var(--primary) !important; color: white !important; border-radius: 12px 12px 0 0;">
+            <i class="fas fa-history me-2"></i> Log Aktivitas Reservasi
         </div>
 
         <div class="card-body">
@@ -62,7 +62,7 @@
 
                                 <td>
                                     <strong>{{ \Carbon\Carbon::parse($booking->tanggal_booking)->translatedFormat('d M Y') }}</strong><br>
-                                    <span class="text-primary fw-bold" style="font-size: 15px;">🕒 {{ $booking->jam_booking }}</span>
+                                    <span class="fw-bold" style="color:#e67e22; font-size: 15px;">🕒 {{ $booking->jam_booking }}</span>
                                 </td>
 
                                 <td>
@@ -107,7 +107,7 @@
                                         @endif
                                         <div class="d-flex justify-content-between pt-1 border-top align-items-center">
                                             <small class="text-muted fw-bold">{{ $booking->dp > 0 ? 'Sisa Bayar:' : 'Total:' }}</small>
-                                            <strong style="color: #0f2f66; font-size:15px;">Rp {{ number_format(max(0, ($booking->total_harga ?? 0) - ($booking->dp ?? 0)), 0, ',', '.') }}</strong>
+                                            <strong style="color: #1e3a5f; font-size:15px;">Rp {{ number_format(max(0, ($booking->total_harga ?? 0) - ($booking->dp ?? 0)), 0, ',', '.') }}</strong>
                                         </div>
                                     </div>
                                 </td>

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<h2 class="page-title mb-4">✍️ Form Tambah Booking</h2>
+<h2 class="page-title mb-4"><i class="fas fa-calendar-plus"></i> Form Tambah Booking</h2>
 
 @if(session('error'))
     <div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius:12px;">
@@ -22,9 +22,9 @@
 @endif
 
 <div class="card table-card p-2 bg-white rounded-4 shadow-sm border-0">
-    <div class="card-header pb-3 pt-3 bg-transparent border-0">
-        <h5 class="m-0 fw-bold" style="color:#0f2f66;">Lengkapi Detail Reservasi Anda</h5>
-        <small class="text-muted">Isi identitas, konfirmasi jam, dan pilih menu lezat kami (opsional).</small>
+    <div class="card-header pb-3 pt-3 border-0" style="background: var(--primary) !important; border-radius: 12px 12px 0 0;">
+        <h5 class="m-0 fw-bold text-white"><i class="fas fa-edit me-2"></i> Lengkapi Detail Reservasi Anda</h5>
+        <small class="text-white text-opacity-75">Isi identitas, konfirmasi jam, dan pilih menu lezat kami (opsional).</small>
     </div>
 
     <div class="alert alert-info mx-3 mt-2 mb-1 border-0 shadow-sm" style="background-color: #e0f2fe; color: #0369a1; border-radius: 12px; font-size:14px;">
@@ -61,7 +61,7 @@
                 <div class="row g-3">
                     <div class="col-md-3 mb-2">
                         <label class="form-label text-secondary fw-semibold">Tanggal Kedatangan</label>
-                        <input type="date" name="tanggal_booking" class="form-control bg-white" value="{{ old('tanggal_booking', $selectedTanggal ?? '') }}" {{ !empty($selectedTanggal) ? 'readonly' : '' }}>
+                        <input type="date" name="tanggal_booking" id="tanggal_booking" class="form-control bg-white" value="{{ old('tanggal_booking', $selectedTanggal ?? '') }}" min="{{ date('Y-m-d') }}" {{ !empty($selectedTanggal) ? 'readonly' : '' }}>
                         @if(!empty($selectedTanggal))
                             <small class="text-success fw-bold d-block mt-1">✔ Tersimpan otomatis</small>
                         @endif
@@ -69,7 +69,7 @@
 
                     <div class="col-md-3 mb-2">
                         <label class="form-label text-secondary fw-semibold">Jam Kedatangan</label>
-                        <input type="time" name="jam_booking" class="form-control bg-white" value="{{ old('jam_booking', $selectedJam ?? '') }}" {{ !empty($selectedJam) ? 'readonly' : '' }}>
+                        <input type="time" name="jam_booking" id="jam_booking" class="form-control bg-white" value="{{ old('jam_booking', $selectedJam ?? '') }}" {{ !empty($selectedJam) ? 'readonly' : '' }}>
                         @if(!empty($selectedJam))
                             <small class="text-success fw-bold d-block mt-1">✔ Jam dipilih</small>
                         @endif
@@ -98,7 +98,9 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <small class="text-warning mt-1 d-block"><i class="fa fa-info-circle"></i> Pastikan meja tidak bentrok di jam yang sama.</small>
+                            <small class="fw-bold d-block mt-1" style="color: #e67e22;">
+                                <i class="fas fa-exclamation-triangle me-1"></i> Pastikan meja tidak bentrok di jam yang sama.
+                            </small>
                         @endif
                     </div>
                 </div>
@@ -290,6 +292,35 @@
         let dpInput = document.getElementById('dp_input');
         if(dpInput) {
             dpInput.addEventListener('input', calculateLiveTotal);
+        }
+
+        // Live Time Blocker (Blokir Jam Mundur di UI)
+        let dateInput = document.getElementById('tanggal_booking');
+        let timeInput = document.getElementById('jam_booking');
+        if(dateInput && timeInput && !timeInput.readOnly) {
+            function updateTimeMin() {
+                let today = new Date();
+                let selectedDate = new Date(dateInput.value);
+                
+                // Set to midnight for accurate day comparison
+                let todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                let selectedDateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+
+                if(selectedDateOnly.getTime() === todayDateOnly.getTime()) {
+                    // It is today, set time min to current time
+                    let h = today.getHours().toString().padStart(2, '0');
+                    let m = today.getMinutes().toString().padStart(2, '0');
+                    timeInput.min = h + ":" + m;
+                    
+                    if(timeInput.value && timeInput.value < timeInput.min) {
+                        timeInput.value = timeInput.min; // Reset value klu lebih kecil
+                    }
+                } else {
+                    timeInput.min = ""; // Hapus limit jika pestan bsk
+                }
+            }
+            dateInput.addEventListener('change', updateTimeMin);
+            updateTimeMin(); // Run on load
         }
     });
 </script>
