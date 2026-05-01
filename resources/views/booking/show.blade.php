@@ -143,6 +143,35 @@
                         <span class="text-secondary fw-bold" style="font-size:14px;">Uang Muka (DP)</span>
                         <span class="fw-bold text-success">- Rp {{ number_format($booking->dp, 0, ',', '.') }}</span>
                     </div>
+
+                    <!-- Bagian QR Code Pembayaran DP -->
+                    <div class="mt-4 text-center p-3" style="border: 1px dashed #ccc; border-radius: 10px; background-color: #f9f9f9;">
+                        <h6 class="text-uppercase" style="font-weight: bold; color: #1e3799; letter-spacing: 1px;">
+                            Scan QR Untuk Pembayaran DP
+                        </h6>
+                        
+                        <div class="my-3">
+                            <!-- Path disesuaikan dengan folder baru Anda -->
+                            <img src="{{ asset('images/menu/qrdewantie.png') }}" 
+                                alt="DANA Dewantie" 
+                                style="width: 230px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 5px solid #fff;">
+                        </div>
+
+                        <div class="payment-details mb-3">
+                            <p class="mb-1">Total DP yang harus dibayar:</p>
+                            <h4 class="text-primary" style="font-weight: 800;">
+                                Rp {{ number_format($booking->dp, 0, ',', '.') }}
+                            </h4>
+                            <p class="text-muted small"></p>
+                        </div>
+
+                        <hr style="border-top: 1px solid #eee;">
+                        
+                        <div class="alert alert-info py-2" style="font-size: 0.85rem;">
+                            <i class="fas fa-info-circle mr-1"></i> 
+                            Simpan tangkapan layar (screenshot) bukti transfer untuk divalidasi oleh kasir.
+                        </div>
+                    </div>
                     @endif
 
                     <div class="d-flex justify-content-between p-3 mt-2 rounded" style="background:#f8fafc; border: 1px solid #e2e8f0; align-items: center;">

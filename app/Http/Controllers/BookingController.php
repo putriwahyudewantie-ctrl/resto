@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Menu;
 use App\Models\Meja;
+use Illuminate\Support\Str; // Diperlukan untuk Str::random
+use SimpleSoftwareIO\QrCode\Facades\QrCode; // Diperlukan untuk QR Code
 
 class BookingController extends Controller
 {
@@ -14,21 +16,19 @@ class BookingController extends Controller
         $query = Booking::orderBy('tanggal_booking', 'desc')
             ->orderBy('jam_booking', 'desc');
 
-        // Feature UAS: Search
+        // Feature UAS: Search[cite: 1]
         if ($request->has('search')) {
             $query->where('nama_pelanggan', 'like', '%' . $request->search . '%')
                   ->orWhere('no_hp', 'like', '%' . $request->search . '%')
                   ->orWhere('nomor_meja', 'like', '%' . $request->search . '%');
         }
 
-        // Admin bisa melihat semua, Customer hanya milik sendiri
+        // Admin bisa melihat semua, Customer hanya milik sendiri[cite: 1]
         if (auth()->check() && auth()->user()->role !== 'admin') {
             $query->where('user_id', auth()->id());
         }
 
-        // AUTO-CANCEL LOGIC (UAS Feature):
-        // Jika ada booking 'Pending' yang sudah lewat hari/jam-nya hari ini,
-        // otomatis ubah status jadi 'Dibatalkan'.
+        // AUTO-CANCEL LOGIC (UAS Feature):[cite: 1]
         $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
         
         Booking::where('status', 'Pending')
@@ -58,7 +58,7 @@ class BookingController extends Controller
         $selectedTanggal = $request->tanggal_booking;
         $selectedJam = $request->jam_booking;
 
-        // Validasi Anti-Time-Travel di layar Form Booking GET
+        // Validasi Anti-Time-Travel[cite: 1]
         if ($selectedTanggal && $selectedJam) {
             $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
             $tglBooking = \Carbon\Carbon::parse($selectedTanggal);
@@ -100,21 +100,19 @@ class BookingController extends Controller
         $tglBooking = \Carbon\Carbon::parse($validated['tanggal_booking']);
         $jamMasuk = \Carbon\Carbon::parse($validated['jam_booking']);
 
-        // Cegah booking di masa lalu
+        // Cegah booking di masa lalu[cite: 1]
         if ($tglBooking->copy()->startOfDay()->lt($sekarang->copy()->startOfDay())) {
-            return back()->withInput()->with('error', 'Tanggal tidak valid! Anda tidak bisa melakukan reservasi untuk hari yang sudah lewat.');
+            return back()->withInput()->with('error', 'Tanggal tidak valid!');
         }
 
-        // Jika booking hari ini, cegah jam yang sudah berlalu
         if ($tglBooking->copy()->startOfDay()->equalTo($sekarang->copy()->startOfDay())) {
             if ($jamMasuk->format('H:i') < $sekarang->format('H:i')) {
-                return back()->withInput()->with('error', 'Waktu tidak valid! Anda tidak bisa melakukan reservasi untuk jam yang sudah berlalu.');
+                return back()->withInput()->with('error', 'Waktu tidak valid!');
             }
         }
 
-        // SMART ANTI-BENTROK LOGIC (Durasi Standar Meja: 2 Jam)
+        // Logic Anti-Bentrok[cite: 1]
         $jamBatasBawah = $jamMasuk->copy()->subHours(2)->format('H:i');
-
         $cekBooking = Booking::where('tanggal_booking', $validated['tanggal_booking'])
             ->where('nomor_meja', $validated['nomor_meja'])
             ->where(function ($query) use ($jamBatasBawah, $jamMasuk) {
@@ -123,7 +121,7 @@ class BookingController extends Controller
             ->first();
 
         if ($cekBooking) {
-            return back()->withInput()->with('error', 'Waktu bertabrakan! Meja ' . $validated['nomor_meja'] . ' terbooking pada jam ' . $cekBooking->jam_booking . ' (Terkunci selama 2 jam pemakaian).');
+            return back()->withInput()->with('error', 'Waktu bertabrakan!');
         }
 
         $meja = Meja::where('no_meja', $validated['nomor_meja'])->first();
@@ -146,8 +144,11 @@ class BookingController extends Controller
             }
         }
 
-        Booking::create([
-            'user_id'         => auth()->id(), // JEJAK ACCOUNT PEMILIK
+        // Generate kode unik untuk isi QR Code[cite: 1]
+        $transactionCode = 'PAY-' . strtoupper(Str::random(12));
+
+        $booking = Booking::create([
+            'user_id'         => auth()->id(), 
             'nama_pelanggan'  => $validated['nama_pelanggan'],
             'no_hp'           => $validated['no_hp'],
             'tanggal_booking' => $validated['tanggal_booking'],
@@ -159,20 +160,21 @@ class BookingController extends Controller
             'status'          => 'Pending',
             'total_harga'     => $totalHarga,
             'dp'              => $validated['dp'] ?? 0,
+            'kode_pembayaran' => $transactionCode, // Menyimpan kode acak[cite: 1]
         ]);
 
-        return redirect('/booking')->with('success', 'Booking berhasil disubmit!');
+        return redirect()->route('booking.show', $booking->id)->with('success', 'Booking berhasil! Silakan bayar DP.');
     }
 
     public function show($id)
     {
         $booking = Booking::findOrFail($id);
         
-        // Proteksi: Hanya owner atau admin yang boleh buka invoice
         if (auth()->user()->role !== 'admin' && $booking->user_id !== auth()->id()) {
             abort(403);
         }
 
+        // Kita tidak perlu lagi $qrCode = QrCode::...
         return view('booking.show', compact('booking'));
     }
 
@@ -192,11 +194,10 @@ class BookingController extends Controller
     
     public function updateStatus(Request $request, $id)
     {
-        // Route ini diproteksi middleware admin, aman.
         $booking = Booking::findOrFail($id);
         $request->validate(['status' => 'required|string|in:Pending,Selesai,Dibatalkan']);
         $booking->update(['status' => $request->status]);
-        return back()->with('success', 'Status Reservasi Meja ' . $booking->nomor_meja . ' diupdate.');
+        return back()->with('success', 'Status Reservasi diupdate.');
     }
 
     public function update(Request $request, $id)
@@ -223,15 +224,13 @@ class BookingController extends Controller
         $tglBooking = \Carbon\Carbon::parse($validated['tanggal_booking']);
         $jamMasuk = \Carbon\Carbon::parse($validated['jam_booking']);
 
-        // Cegah booking di masa lalu
         if ($tglBooking->copy()->startOfDay()->lt($sekarang->copy()->startOfDay())) {
-            return back()->withInput()->with('error', 'Tanggal tidak valid! Anda tidak bisa melakukan reservasi untuk hari yang sudah lewat.');
+            return back()->withInput()->with('error', 'Tanggal tidak valid!');
         }
 
-        // Jika booking hari ini, cegah jam yang sudah berlalu
         if ($tglBooking->copy()->startOfDay()->equalTo($sekarang->copy()->startOfDay())) {
             if ($jamMasuk->format('H:i') < $sekarang->format('H:i')) {
-                return back()->withInput()->with('error', 'Waktu tidak valid! Anda tidak bisa melakukan reservasi untuk jam yang sudah berlalu.');
+                return back()->withInput()->with('error', 'Waktu tidak valid!');
             }
         }
 
@@ -282,7 +281,6 @@ class BookingController extends Controller
 
     public function destroy($id)
     {
-        // Diproteksi middleware admin
         $booking = Booking::findOrFail($id);
         $booking->delete();
         return redirect('/booking')->with('success', 'Data dihapus.');
