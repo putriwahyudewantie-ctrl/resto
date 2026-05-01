@@ -300,7 +300,7 @@
             <div class="card-body p-4">
                 <h6 class="fw-bold mb-2">Butuh Bantuan?</h6>
                 <p style="font-size: 12px; opacity: 0.8;">Hubungi admin jika Anda mengalami kendala saat melakukan reservasi meja.</p>
-                <a href="https://wa.me/123456789" class="btn btn-sm btn-light w-100 fw-bold py-2">
+                <a href="https://wa.me/628988642054" class="btn btn-sm btn-light w-100 fw-bold py-2">
                     <i class="fab fa-whatsapp me-1"></i> WhatsApp Admin
                 </a>
             </div>
