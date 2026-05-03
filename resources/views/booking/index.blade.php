@@ -118,7 +118,7 @@
                                     @elseif($booking->status == 'Dibatalkan')
                                         <span class="badge bg-danger p-2 d-block w-100"><i class="fa fa-times-circle"></i> Dibatalkan</span>
                                     @elseif($booking->status == 'Pending DP')
-                                        <span class="badge bg-danger text-white p-2 d-block w-100 shadow-sm mb-2"><i class="fa fa-exclamation-circle"></i> Pending DP (Belum Lunas)</span>
+                                        <span class="badge p-2 d-block w-100 shadow-sm mb-2 text-white" style="background-color: #f17510;"><i class="fa fa-exclamation-circle"></i> Pending DP (Belum Lunas)</span>
                                         @if(Auth::user()->role === 'admin')
                                         <form action="{{ url('/booking/'.$booking->id.'/status') }}" method="POST">
                                             @csrf
@@ -130,14 +130,13 @@
                                         </form>
                                         @endif
                                     @elseif($booking->status == 'Pending' || $booking->status == 'Dikonfirmasi')
-                                        <span class="badge bg-info text-white p-2 d-block w-100 mb-2 shadow-sm"><i class="fa fa-clock"></i> DP Lunas (Menunggu Kedatangan)</span>
-                                        
+                                        <span class="badge bg-warning text-dark p-2 d-block w-100 mb-2 shadow-sm"><i class="fa fa-clock"></i> Pending </span>
                                         @if(Auth::user()->role === 'admin')
                                         <form action="{{ url('/booking/'.$booking->id.'/status') }}" method="POST">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status" value="Selesai">
-                                            <button class="btn btn-primary btn-sm w-100 fw-bold shadow-sm" onclick="return confirm('Tandai tamu ini sudah selesai dan tagihan lunas?')">
+                                            <button class="btn btn-success btn-sm w-100 fw-bold shadow-sm" onclick="return confirm('Tandai tamu ini sudah selesai dan tagihan lunas?')">
                                                 Tandai Selesai
                                             </button>
                                         </form>
