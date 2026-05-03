@@ -31,7 +31,7 @@ class BookingController extends Controller
         // AUTO-CANCEL LOGIC (UAS Feature):[cite: 1]
         $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
         
-        Booking::where('status', 'Pending')
+        Booking::where('status', 'belum_bayar_dp')
             ->where(function($q) use ($sekarang) {
                 $q->where('tanggal_booking', '<', $sekarang->format('Y-m-d'))
                   ->orWhere(function($q2) use ($sekarang) {
@@ -157,7 +157,7 @@ class BookingController extends Controller
             'nomor_meja'      => $validated['nomor_meja'],
             'menu'            => $menuPesanan, 
             'catatan'         => $validated['catatan'] ?? null,
-            'status'          => 'Pending',
+            'status'          => 'belum_bayar_dp',
             'total_harga'     => $totalHarga,
             'dp'              => $validated['dp'] ?? 0,
             'kode_pembayaran' => $transactionCode, // Menyimpan kode acak[cite: 1]
