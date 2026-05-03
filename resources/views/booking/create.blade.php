@@ -195,6 +195,8 @@
                     <div class="alert alert-danger mt-3 p-3 border-0 shadow-sm" style="font-size:13px; border-radius:12px; background:#fff1f2; color:#be123c; line-height: 1.6;">
                         <strong>⚠️ Kebijakan DP Baru:</strong> <br>
                         <i class="fa fa-info-circle me-1"></i> Mulai sekarang, setiap reservasi <b>Wajib membayar DP Minimal Rp 100.000</b> untuk jaminan ketersediaan meja.<br>
+                        <i class="fa fa-caret-right me-1"></i> Silakan Transfer ke rekening <b>BCA 123-456-789 (a.n RestoKu)</b> sebelum simpan booking.<br>
+                        <i class="fa fa-caret-right me-1"></i> Masukkan nominal transfer Anda (Min Rp 100k) di atas.
                     </div>
                 </div>
             </div>
