@@ -31,7 +31,7 @@ class BookingController extends Controller
         // AUTO-CANCEL LOGIC (UAS Feature):[cite: 1]
         $sekarang = \Carbon\Carbon::now('Asia/Jakarta');
         
-        Booking::where('status', 'belum_bayar_dp')
+        Booking::where('status', 'Pending DP')
             ->where(function($q) use ($sekarang) {
                 $q->where('tanggal_booking', '<', $sekarang->format('Y-m-d'))
                   ->orWhere(function($q2) use ($sekarang) {
@@ -157,7 +157,7 @@ class BookingController extends Controller
             'nomor_meja'      => $validated['nomor_meja'],
             'menu'            => $menuPesanan, 
             'catatan'         => $validated['catatan'] ?? null,
-            'status'          => 'belum_bayar_dp',
+            'status'          => 'Pending DP',
             'total_harga'     => $totalHarga,
             'dp'              => $validated['dp'] ?? 0,
             'kode_pembayaran' => $transactionCode, // Menyimpan kode acak[cite: 1]
@@ -195,7 +195,7 @@ class BookingController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
-        $request->validate(['status' => 'required|string|in:Pending,Selesai,Dibatalkan']);
+        $request->validate(['status' => 'required|string|in:Pending,Selesai,Dibatalkan,Pending DP,Dikonfirmasi']);
         $booking->update(['status' => $request->status]);
         return back()->with('success', 'Status Reservasi diupdate.');
     }

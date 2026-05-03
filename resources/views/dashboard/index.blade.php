@@ -248,12 +248,16 @@
                                     </td>
                                     <td><span class="badge bg-light text-dark border">Meja {{ $booking->nomor_meja }}</span></td>
                                     <td>
-                                        @if($booking->status === 'Dikonfirmasi' || $booking->status === 'Selesai')
+                                        @if($booking->status === 'Selesai')
                                             <span class="badge bg-success-subtle text-success">Selesai</span>
-                                        @elseif($booking->status === 'Pending' || $booking->status === 'Menunggu' || $booking->status === 'Dibatalkan')
-                                            <span class="badge bg-warning text-dark px-2 py-1 shadow-sm"><i class="fas fa-clock me-1"></i>Pending</span>
+                                        @elseif($booking->status === 'Pending DP')
+                                            <span class="badge bg-danger-subtle text-danger"><i class="fas fa-exclamation-circle me-1"></i>Pending DP</span>
+                                        @elseif($booking->status === 'Dikonfirmasi' || $booking->status === 'Pending')
+                                            <span class="badge bg-info-subtle text-info"><i class="fas fa-clock me-1"></i>DP Lunas</span>
+                                        @elseif($booking->status === 'Dibatalkan')
+                                            <span class="badge bg-secondary text-white">Dibatalkan</span>
                                         @else
-                                            <span class="badge bg-danger-subtle text-danger">Cancelled</span>
+                                            <span class="badge bg-secondary">{{ $booking->status }}</span>
                                         @endif
                                     </td>
                                     <td class="text-center">

@@ -264,17 +264,34 @@
         .dropdown-action-link.danger:hover { background: #fff1f1; }
         .dropdown-action-link.danger i { color: #dc2626; }
 
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.5); z-index: 995; backdrop-filter: blur(2px);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
         @media (max-width: 991px) {
-            .sidebar { width: 72px; padding: 18px 8px; }
-            .sidebar .nav-link span:not(.nav-icon) { display: none; }
-            .brand-box span, .nav-section, .brand-sub { display: none; }
+            .sidebar { 
+                position: fixed; left: -280px; width: 270px; height: 100vh; z-index: 1000;
+                padding: 28px 18px; transition: left 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+            }
+            .sidebar.mobile-open { left: 0; }
+            /* Reset elements that were hidden in collapsed state */
+            .sidebar .nav-link span:not(.nav-icon) { display: inline-block; }
+            .brand-box span, .nav-section, .brand-sub { display: block; }
+            .sidebar .brand-box { justify-content: flex-start; padding: 0 6px; }
+            .sidebar .nav-link { justify-content: flex-start; }
+            
             .top-navbar { padding: 0 18px; }
             .content-area { padding: 18px; }
             .profile-info { display: none; }
+            .main-content { margin-left: 0; width: 100%; flex: 1; }
         }
     </style>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="app-wrapper">
         <aside class="sidebar">
             <div class="brand-box">
@@ -286,10 +303,13 @@
             </div>
 
             <div class="nav-section">Main Menu</div>
+            {{-- Dashboard hanya untuk Admin --}}
+            @if(Auth::user()->role === 'admin')
             <a href="{{ url('/dashboard') }}" class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}">
                 <span class="nav-icon"><i class="fas fa-th-large"></i></span>
                 <span>Dashboard</span>
             </a>
+            @endif
 
             {{-- Dapur hanya lihat pesanan --}}
             @if(Auth::user()->role === 'dapur')
@@ -298,18 +318,26 @@
                     <span>Pesanan Masuk</span>
                 </a>
             @else
-                <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
-                    <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
-                    <span>Reservasi</span>
-                </a>
                 <a href="{{ url('/meja') }}" class="nav-link {{ request()->is('meja*') ? 'active' : '' }}">
                     <span class="nav-icon"><i class="fas fa-chair"></i></span>
-                    <span>Meja</span>
+                    <span>Pesan Meja</span>
                 </a>
                 <a href="{{ url('/menu') }}" class="nav-link {{ request()->is('menu*') ? 'active' : '' }}">
                     <span class="nav-icon"><i class="fas fa-utensils"></i></span>
-                    <span>Menu</span>
+                    <span>Lihat Menu</span>
                 </a>
+                
+                @if(Auth::user()->role === 'admin')
+                <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-history"></i></span>
+                    <span>Data Reservasi</span>
+                </a>
+                @else
+                <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-receipt"></i></span>
+                    <span>Pesanan Saya</span>
+                </a>
+                @endif
             @endif
 
             {{-- User Management for Admin Only --}}
@@ -422,24 +450,99 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // SweetAlert2 Global Configuration & Overrides
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Ganti semua onsubmit confirm menjadi SweetAlert
+            document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+                let match = form.getAttribute('onsubmit').match(/confirm\(['"](.+?)['"]\)/);
+                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan aksi ini?";
+                form.removeAttribute('onsubmit');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Konfirmasi Aksi',
+                        text: msg,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#e67e22',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: '<i class="fas fa-check me-1"></i> Ya, Lanjutkan!',
+                        cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
+                        reverseButtons: true,
+                        customClass: {
+                            popup: 'rounded-4 shadow-lg'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            // 2. Ganti semua onclick confirm menjadi SweetAlert
+            document.querySelectorAll('a[onclick*="confirm"], button[onclick*="confirm"]').forEach(btn => {
+                let match = btn.getAttribute('onclick').match(/confirm\(['"](.+?)['"]\)/);
+                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan aksi ini?";
+                btn.removeAttribute('onclick');
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    let form = btn.closest('form');
+                    Swal.fire({
+                        title: 'Konfirmasi Aksi',
+                        text: msg,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#e67e22',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: '<i class="fas fa-check me-1"></i> Ya, Lanjutkan!',
+                        cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
+                        reverseButtons: true,
+                        customClass: {
+                            popup: 'rounded-4 shadow-lg'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if(form) {
+                                form.submit();
+                            } else if(btn.tagName.toLowerCase() === 'a' && btn.href) {
+                                window.location.href = btn.href;
+                            }
+                        }
+                    });
+                });
+            });
+        });
+
+        // Toggle functions
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('collapsed');
+            const overlay = document.getElementById('sidebarOverlay');
             
-            // Simpan state di localStorage
-            if (sidebar.classList.contains('collapsed')) {
-                localStorage.setItem('sidebarState', 'collapsed');
+            if (window.innerWidth <= 991) {
+                // Mobile behavior: off-canvas
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
             } else {
-                localStorage.setItem('sidebarState', 'expanded');
+                // Desktop behavior: push
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    localStorage.setItem('sidebarState', 'collapsed');
+                } else {
+                    localStorage.setItem('sidebarState', 'expanded');
+                }
             }
         }
 
         // Terapkan state saat halaman dimuat
         document.addEventListener('DOMContentLoaded', () => {
-            const sidebarState = localStorage.getItem('sidebarState');
-            if (sidebarState === 'collapsed') {
-                document.querySelector('.sidebar').classList.add('collapsed');
+            if (window.innerWidth > 991) {
+                const sidebarState = localStorage.getItem('sidebarState');
+                if (sidebarState === 'collapsed') {
+                    document.querySelector('.sidebar').classList.add('collapsed');
+                }
             }
         });
 
@@ -450,14 +553,47 @@
             chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
         }
         // Tutup kalau klik di luar
-        document.addEventListener('click', function(e) {
-            const container = document.getElementById('profileContainer');
+        window.addEventListener('click', function(e) {
+            const profileArea = document.getElementById('profileContainer');
             const dropdown = document.getElementById('profileDropdown');
-            if (!container.contains(e.target)) {
+            const chevron  = document.getElementById('profileChevron');
+            if (profileArea && !profileArea.contains(e.target)) {
                 dropdown.classList.remove('show');
-                document.getElementById('profileChevron').style.transform = 'rotate(0)';
+                chevron.style.transform = 'rotate(0)';
             }
         });
     </script>
+
+    {{-- Global Success/Error Alerts using SweetAlert --}}
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                customClass: { popup: 'rounded-4 shadow-lg' }
+            });
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Peringatan!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                confirmButtonColor: '#e67e22',
+                confirmButtonText: 'Mengerti',
+                customClass: { popup: 'rounded-4 shadow-lg' }
+            });
+        });
+    </script>
+    @endif
 </body>
 </html>
