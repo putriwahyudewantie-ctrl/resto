@@ -118,7 +118,7 @@
                                     @elseif($booking->status == 'Dibatalkan')
                                         <span class="badge bg-danger p-2 d-block w-100"><i class="fa fa-times-circle"></i> Dibatalkan</span>
                                     @elseif($booking->status == 'Pending DP')
-                                        <span class="badge p-2 d-block w-100 shadow-sm mb-2 text-white" style="background-color: #f17510;"><i class="fa fa-exclamation-circle"></i> Pending DP (Belum Lunas)</span>
+                                        <span class="badge p-2 d-block w-100 shadow-sm mb-2 text-white" style="background-color: #e9b20d;"><i class="fa fa-exclamation-circle"></i> Pending DP (Belum Lunas)</span>
                                         @if(Auth::user()->role === 'admin')
                                         <form action="{{ url('/booking/'.$booking->id.'/status') }}" method="POST">
                                             @csrf
