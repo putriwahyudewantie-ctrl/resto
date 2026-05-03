@@ -5,8 +5,8 @@
 <div class="container-fluid px-4">
 
     <div class="d-flex justify-content-end align-items-center mb-4">
-        <a href="{{ url('/booking/create') }}" class="btn shadow-sm px-4 rounded-pill" style="background:#e67e22; color:white; font-weight:700;">
-            <i class="fas fa-plus-circle me-2"></i>Tambah Reservasi
+        <a href="{{ url('/booking/create') }}" class="btn-resto-accent px-4 py-2">
+            <i class="fas fa-plus-circle"></i> Tambah Reservasi
         </a>
     </div>
 

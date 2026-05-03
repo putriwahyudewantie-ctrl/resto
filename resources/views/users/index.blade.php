@@ -37,9 +37,11 @@
 @endif
 
 <div class="card table-card shadow-sm border-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold"><i class="fas fa-list me-2"></i>Daftar Pengguna Terdaftar</h5>
-        <span class="role-badge" style="background:#e67e22; color:white; border:none;">{{ count($users) }} Akun</span>
+    <div class="card-header d-flex justify-content-between align-items-center bg-white py-3">
+        <h5 class="mb-0 fw-bold text-navy"><i class="fas fa-users-cog me-2"></i>User Management</h5>
+        <a href="{{ route('users.create') }}" class="btn-resto-accent btn-sm py-2">
+            <i class="fas fa-user-plus"></i> Tambah User Baru
+        </a>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -48,7 +50,7 @@
                     <tr>
                         <th class="ps-4" style="width:35%;">Pengguna</th>
                         <th>Email</th>
-                        <th>Role Saat Ini</th>
+                        <th>Role</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -63,7 +65,7 @@
                                 <div>
                                     <div class="fw-bold" style="color:#1e293b;">{{ $user->name }}</div>
                                     @if($user->id === auth()->id())
-                                        <span style="font-size:10px; color:#e67e22; font-weight:700;">● Anda</span>
+                                        <span style="font-size:10px; color:#e67e22; font-weight:700;">● Anda Sedang Login</span>
                                     @endif
                                 </div>
                             </div>
@@ -82,20 +84,26 @@
                         </td>
 
                         <td class="text-center">
-                            @if($user->id !== auth()->id())
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                    onsubmit="return confirm('Hapus user {{ $user->name }} secara permanen?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger border-2 rounded-2" title="Hapus User">
-                                        <i class="fas fa-trash-alt"></i>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning border-2 rounded-2" title="Edit User">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                @if($user->id !== auth()->id())
+                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                        onsubmit="return confirm('Hapus user {{ $user->name }} secara permanen?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-2 rounded-2" title="Hapus User">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <button class="btn btn-sm btn-light border-2 rounded-2 disabled" title="Tidak Bisa Hapus Diri Sendiri">
+                                        <i class="fas fa-trash-alt text-muted"></i>
                                     </button>
-                                </form>
-                            @else
-                                <span class="badge bg-secondary text-white">
-                                    <i class="fas fa-lock me-1"></i> (Anda)
-                                </span>
-                            @endif
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @endforeach

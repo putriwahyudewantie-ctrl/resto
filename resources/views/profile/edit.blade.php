@@ -21,11 +21,12 @@
             </div>
         @endif
 
-        <!-- Card: Informasi Profil -->
-        <div class="card bg-white rounded-4 shadow-sm border-0 mb-4 p-2">
-            <div class="card-header bg-transparent border-0 pt-3 pb-0">
-                <h5 class="fw-bold m-0" style="color:#0f2f66;">Informasi Profil</h5>
-                <p class="text-muted small">Perbarui informasi nama dan email akun Anda.</p>
+        <div class="card rounded-4 shadow-sm border-0 mb-4 overflow-hidden">
+            <div class="card-header pt-3 pb-2">
+                <div>
+                    <h5 class="fw-bold m-0 text-white">Informasi Profil</h5>
+                    <p class="text-white-50 small m-0">Perbarui informasi nama dan email akun Anda.</p>
+                </div>
             </div>
             <div class="card-body">
                 <form id="send-verification" method="post" action="{{ route('verification.send') }}">
@@ -47,17 +48,18 @@
                     </div>
 
                     <div class="d-flex align-items-center gap-3">
-                        <button type="submit" class="btn btn-primary px-4 py-2" style="border-radius:10px;">Simpan Profil</button>
+                        <button type="submit" class="btn-resto-accent">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Card: Ganti Password -->
-        <div class="card bg-white rounded-4 shadow-sm border-0 p-2">
-            <div class="card-header bg-transparent border-0 pt-3 pb-0">
-                <h5 class="fw-bold m-0" style="color:#0f2f66;">Perbarui Password</h5>
-                <p class="text-muted small">Pastikan akun Anda menggunakan password yang panjang dan acak agar tetap aman.</p>
+        <div class="card rounded-4 shadow-sm border-0 overflow-hidden">
+            <div class="card-header pt-3 pb-2">
+                <div>
+                    <h5 class="fw-bold m-0 text-white">Perbarui Password</h5>
+                    <p class="text-white-50 small m-0">Pastikan akun Anda menggunakan password yang panjang dan acak.</p>
+                </div>
             </div>
             <div class="card-body">
                 <form method="post" action="{{ route('password.update') }}">
@@ -80,7 +82,7 @@
                     </div>
 
                     <div class="d-flex align-items-center gap-3">
-                        <button type="submit" class="btn btn-dark px-4 py-2" style="border-radius:10px;">Ganti Password</button>
+                        <button type="submit" class="btn-resto-navy">Ganti Password</button>
                         
                         @if (session('status') === 'password-updated')
                             <p class="text-success m-0 small fw-bold">Tersimpan.</p>

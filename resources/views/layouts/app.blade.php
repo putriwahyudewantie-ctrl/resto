@@ -248,6 +248,51 @@
             padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-top: 6px;
         }
         .badge-admin { background: #fef3c7; color: #92400e; }
+
+        /* ===== PREMIUM BUTTONS ===== */
+        .btn-resto-accent {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white !important;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 24px;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+            text-decoration: none;
+        }
+        .btn-resto-accent:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.45);
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        .btn-resto-accent:active { transform: translateY(-1px); }
+        .btn-resto-accent i { font-size: 14px; }
+
+        .btn-resto-navy {
+            background: linear-gradient(135deg, #1e3a5f 0%, #162a44 100%);
+            color: white !important;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 24px;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.25);
+            text-decoration: none;
+        }
+        .btn-resto-navy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 58, 95, 0.35);
+            background: linear-gradient(135deg, #2c5282 0%, #1e3a5f 100%);
+        }
         .badge-customer { background: #ede9fe; color: #5b21b6; }
         .badge-dapur { background: #fce7f3; color: #9d174d; }
 
@@ -346,6 +391,10 @@
             <a href="{{ url('/users') }}" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
                 <span class="nav-icon"><i class="fas fa-users-cog"></i></span>
                 <span>User Management</span>
+            </a>
+            <a href="{{ route('reports.index') }}" class="nav-icon nav-link {{ request()->is('reports*') ? 'active' : '' }}">
+                <span class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                <span>Laporan Omzet</span>
             </a>
             @endif
 

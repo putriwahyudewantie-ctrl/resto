@@ -15,10 +15,10 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // ===== DAPUR – (Hanya bisa diakses Admin dan Dapur) =====
-    // Pastikan middleware 'dapur' di Kernel/app.php sudah mengizinkan admin juga
+    // ===== AKSES STAF (Admin + Dapur) =====
     Route::middleware(['dapur'])->group(function () {
         Route::get('/dapur/pesanan', [DapurController::class, 'pesanan'])->name('dapur.pesanan');
+        Route::patch('/booking/{id}/status', [BookingController::class, 'updateStatus']);
     });
 
     // ===== AKSES UMUM (Customer + Admin + Dapur) =====
@@ -31,7 +31,6 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->group(function () {
         // Admin bisa hapus & update status booking
         Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->name('booking.destroy');
-        Route::patch('/booking/{id}/status', [BookingController::class, 'updateStatus']);
 
         // Admin bisa mengelola data Menu (tambah, edit, hapus)
         Route::resource('menu', MenuController::class)->except(['index']); 
@@ -40,8 +39,11 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('meja', MejaController::class)->except(['index']);
         
         // Manajemen User
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::resource('users', UserController::class)->except(['show']);
+        
+        // Laporan
+        Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/print', [\App\Http\Controllers\ReportController::class, 'print'])->name('reports.print');
     });
 
     // ===== Profile =====

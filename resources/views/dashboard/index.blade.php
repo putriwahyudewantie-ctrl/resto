@@ -124,8 +124,8 @@
     </div>
     <div class="header-actions">
         @if(Auth::user()->role !== 'dapur')
-        <a href="{{ url('/booking/create') }}" class="btn btn-sm" style="background:#e67e22; color:white; font-weight:700; border-radius:10px; padding:9px 18px;">
-            <i class="fas fa-plus me-1"></i> Buat Booking
+        <a href="{{ url('/booking/create') }}" class="btn-resto-accent btn-sm py-2">
+            <i class="fas fa-plus"></i> Buat Booking
         </a>
         @endif
     </div>

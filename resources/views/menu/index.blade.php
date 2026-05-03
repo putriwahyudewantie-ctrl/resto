@@ -6,8 +6,8 @@
 
     @if(Auth::user()->role === 'admin')
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ url('/menu/create') }}" class="btn shadow-sm px-4" style="background:#e67e22; color:white; font-weight:700; border-radius:10px;">
-            <i class="fas fa-plus-circle me-1"></i> Tambah Menu
+        <a href="{{ url('/menu/create') }}" class="btn-resto-accent px-4 py-2">
+            <i class="fas fa-plus-circle"></i> Tambah Menu
         </a>
     </div>
     @endif

@@ -168,9 +168,15 @@
             <span class="meta-pill orang">
                 <i class="fas fa-users"></i> {{ $booking->jumlah_orang }} Orang
             </span>
-            <span class="badge ms-auto {{ $booking->status === 'Confirmed' ? 'bg-success' : 'bg-warning text-dark' }}">
-                {{ $booking->status }}
-            </span>
+            @if($booking->status === 'Pending')
+                <span class="badge ms-auto bg-warning text-dark"><i class="fas fa-clock me-1"></i>Antrean</span>
+            @elseif($booking->status === 'Cooking')
+                <span class="badge ms-auto bg-info text-white"><i class="fas fa-fire me-1"></i>Dimasak</span>
+            @elseif($booking->status === 'Ready')
+                <span class="badge ms-auto bg-success text-white"><i class="fas fa-check-double me-1"></i>Siap</span>
+            @else
+                <span class="badge ms-auto bg-secondary text-white">{{ $booking->status }}</span>
+            @endif
         </div>
 
         <div>
@@ -205,6 +211,32 @@
                     <i class="fas fa-sticky-note me-1"></i> <strong>Catatan:</strong> {{ $booking->catatan }}
                 </div>
             @endif
+
+            <div class="mt-4 d-flex gap-2">
+                @if($booking->status === 'Pending')
+                    <form action="{{ url('/booking/'.$booking->id.'/status') }}" method="POST" class="w-100">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="status" value="Cooking">
+                        <button type="submit" class="btn btn-warning btn-sm w-100 fw-bold py-2 shadow-sm">
+                            <i class="fas fa-fire me-1"></i> Mulai Masak
+                        </button>
+                    </form>
+                @elseif($booking->status === 'Cooking')
+                    <form action="{{ url('/booking/'.$booking->id.'/status') }}" method="POST" class="w-100">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="status" value="Ready">
+                        <button type="submit" class="btn btn-success btn-sm w-100 fw-bold py-2 shadow-sm">
+                            <i class="fas fa-bell me-1"></i> Siap Sajikan
+                        </button>
+                    </form>
+                @elseif($booking->status === 'Ready')
+                    <div class="alert alert-success m-0 py-2 px-3 w-100 text-center fw-bold small">
+                        <i class="fas fa-check-double me-1"></i> Menunggu Diantar
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 @empty

@@ -4,8 +4,8 @@
 
 <div class="d-flex justify-content-end align-items-center mb-4">
     @if(auth()->user()->role === 'admin')
-    <a href="{{ route('meja.create') }}" class="btn shadow-sm rounded-pill px-4" style="background:#e67e22; color:white; font-weight:700;">
-        <i class="fas fa-plus-circle me-2"></i>Tambah Unit Meja
+    <a href="{{ route('meja.create') }}" class="btn-resto-accent px-4 py-2">
+        <i class="fas fa-plus-circle"></i> Tambah Unit Meja
     </a>
     @endif
 </div>
@@ -70,7 +70,7 @@
                 @else
                     <div class="meja-status status-available mb-3"><i class="fas fa-check-circle me-1"></i> Tersedia</div>
                     <a href="{{ url('/booking/create?meja_id=' . $meja->id . '&nomor_meja=' . $meja->no_meja . '&jumlah_orang=' . $meja->kapasitas . '&tanggal_booking=' . $tanggal . '&jam_booking=' . $jam) }}" 
-                       class="btn w-100 shadow-sm" style="background:#e67e22; color:white; font-weight:700;">
+                       class="btn-resto-accent w-100 justify-content-center py-2">
                         Booking Sekarang
                     </a>
                 @endif
