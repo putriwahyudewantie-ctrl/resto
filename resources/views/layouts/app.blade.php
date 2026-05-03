@@ -371,7 +371,7 @@
                     <span style="color:#1e293b; font-weight:600;">
                         @php
                             $seg = Request::segment(1) ?? 'dashboard';
-                            $labels = ['dashboard' => 'Dashboard', 'booking' => 'Reservasi', 'menu' => 'Menu', 'meja' => 'Meja', 'users' => 'User Management', 'dapur' => 'Dapur – Pesanan Masuk', 'profile' => 'Profil Saya'];
+                            $labels = ['dashboard' => 'Dashboard', 'booking' => 'Data Reservasi', 'menu' => 'Daftar Menu', 'meja' => 'Manajemen Meja', 'users' => 'User Management', 'dapur' => 'Dapur – Pesanan Masuk', 'profile' => 'Profil Saya'];
                         @endphp
                         {{ $labels[$seg] ?? ucfirst($seg) }}
                     </span>
@@ -454,26 +454,36 @@
     <script>
         // SweetAlert2 Global Configuration & Overrides
         document.addEventListener("DOMContentLoaded", function() {
+            const commonConfig = {
+                iconColor: '#e67e22',
+                showCancelButton: true,
+                confirmButtonColor: '#e67e22',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '<i class="fas fa-check me-1"></i> Ya, Lanjutkan!',
+                cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
+                reverseButtons: true,
+                padding: '2.2rem',
+                width: '420px',
+                customClass: {
+                    popup: 'rounded-5 shadow-lg border-0',
+                    title: 'fw-bold text-navy',
+                    confirmButton: 'rounded-3 px-4 py-2',
+                    cancelButton: 'rounded-3 px-4 py-2'
+                }
+            };
+
             // 1. Ganti semua onsubmit confirm menjadi SweetAlert
             document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
                 let match = form.getAttribute('onsubmit').match(/confirm\(['"](.+?)['"]\)/);
-                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan aksi ini?";
+                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan?";
                 form.removeAttribute('onsubmit');
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
                     Swal.fire({
+                        ...commonConfig,
                         title: 'Konfirmasi Aksi',
                         text: msg,
                         icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#e67e22',
-                        cancelButtonColor: '#64748b',
-                        confirmButtonText: '<i class="fas fa-check me-1"></i> Ya, Lanjutkan!',
-                        cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
-                        reverseButtons: true,
-                        customClass: {
-                            popup: 'rounded-4 shadow-lg'
-                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();
@@ -485,24 +495,16 @@
             // 2. Ganti semua onclick confirm menjadi SweetAlert
             document.querySelectorAll('a[onclick*="confirm"], button[onclick*="confirm"]').forEach(btn => {
                 let match = btn.getAttribute('onclick').match(/confirm\(['"](.+?)['"]\)/);
-                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan aksi ini?";
+                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan?";
                 btn.removeAttribute('onclick');
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     let form = btn.closest('form');
                     Swal.fire({
+                        ...commonConfig,
                         title: 'Konfirmasi Aksi',
                         text: msg,
                         icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#e67e22',
-                        cancelButtonColor: '#64748b',
-                        confirmButtonText: '<i class="fas fa-check me-1"></i> Ya, Lanjutkan!',
-                        cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
-                        reverseButtons: true,
-                        customClass: {
-                            popup: 'rounded-4 shadow-lg'
-                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             if(form) {
@@ -572,10 +574,15 @@
                 title: 'Berhasil!',
                 text: "{{ session('success') }}",
                 icon: 'success',
+                iconColor: '#10b981',
                 timer: 3000,
                 timerProgressBar: true,
                 showConfirmButton: false,
-                customClass: { popup: 'rounded-4 shadow-lg' }
+                padding: '2rem',
+                customClass: { 
+                    popup: 'rounded-5 shadow-lg border-0',
+                    title: 'fw-bold text-success'
+                }
             });
         });
     </script>
@@ -588,9 +595,15 @@
                 title: 'Peringatan!',
                 text: "{{ session('error') }}",
                 icon: 'error',
+                iconColor: '#ef4444',
                 confirmButtonColor: '#e67e22',
                 confirmButtonText: 'Mengerti',
-                customClass: { popup: 'rounded-4 shadow-lg' }
+                padding: '2rem',
+                customClass: { 
+                    popup: 'rounded-5 shadow-lg border-0',
+                    title: 'fw-bold text-danger',
+                    confirmButton: 'rounded-3 px-4 py-2'
+                }
             });
         });
     </script>

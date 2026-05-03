@@ -19,7 +19,7 @@ return new class extends Migration
         $table->decimal('dp', 12, 2);
         
         // 4 Status yang Anda inginkan
-        $table->enum('status', ['pending_dp', 'pending', 'selesai', 'dibatalkan'])->default('pending_dp');
+        $table->enum('status', ['pending_dp', 'pending', 'done', 'canceled'])->default('pending_dp');
         
         $table->timestamps();
     });

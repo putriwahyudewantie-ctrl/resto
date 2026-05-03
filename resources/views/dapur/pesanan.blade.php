@@ -168,7 +168,7 @@
             <span class="meta-pill orang">
                 <i class="fas fa-users"></i> {{ $booking->jumlah_orang }} Orang
             </span>
-            <span class="badge ms-auto {{ $booking->status === 'Dikonfirmasi' ? 'bg-success' : 'bg-warning text-dark' }}">
+            <span class="badge ms-auto {{ $booking->status === 'Confirmed' ? 'bg-success' : 'bg-warning text-dark' }}">
                 {{ $booking->status }}
             </span>
         </div>

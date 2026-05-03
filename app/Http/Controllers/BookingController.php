@@ -195,7 +195,7 @@ class BookingController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
-        $request->validate(['status' => 'required|string|in:Pending,Selesai,Dibatalkan,Pending DP,Dikonfirmasi']);
+        $request->validate(['status' => 'required|string|in:Pending,Selesai,Dibatalkan,Pending DP']);
         $booking->update(['status' => $request->status]);
         return back()->with('success', 'Status Reservasi diupdate.');
     }
