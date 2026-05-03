@@ -37,7 +37,19 @@
             height: 100vh; 
             z-index: 1000; 
             box-shadow: 4px 0 20px rgba(0,0,0,0.15); 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            white-space: nowrap;
         }
+        .sidebar.collapsed { width: 78px; padding: 28px 12px; }
+        .sidebar.collapsed .brand-name, 
+        .sidebar.collapsed .brand-sub, 
+        .sidebar.collapsed .nav-section, 
+        .sidebar.collapsed .nav-link span:not(.nav-icon) {
+            display: none;
+        }
+        .sidebar.collapsed .brand-box { justify-content: center; margin-bottom: 35px; padding: 0; gap: 0; }
+        .sidebar.collapsed .nav-link { justify-content: center; padding: 11px 0; }
         .brand-box { display: flex; align-items: center; gap: 12px; margin-bottom: 35px; padding: 0 6px; }
         .brand-icon { 
             width: 42px; height: 42px; 
@@ -66,7 +78,14 @@
         .nav-link .nav-icon { width: 20px; text-align: center; font-size: 15px; }
 
         /* ===== MAIN CONTENT ===== */
-        .main-content { flex: 1; display: flex; flex-direction: column; background: var(--bg-page); }
+        .main-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background: var(--bg-page); 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            min-width: 0;
+        }
         
         .top-navbar { 
             height: 68px; 
@@ -83,22 +102,45 @@
             display: flex; align-items: center; gap: 6px;
         }
         .top-navbar .page-breadcrumb i { color: var(--accent); }
+        .sidebar-toggle {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px;
+            margin-right: 15px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-toggle:hover { background: #f1f5f9; color: var(--primary); }
 
         .content-area { padding: 36px; flex: 1; }
         .main-footer { 
-            padding: 30px 36px; 
-            background: var(--bg-sidebar); 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            color: rgba(255,255,255,0.7); 
+            padding: 24px 36px; 
+            background: transparent; 
+            border-top: 1px solid var(--border); 
+            color: var(--text-muted); 
             font-size: 13px; 
             font-weight: 500;
+            margin-top: auto;
         }
         .footer-content { display: flex; justify-content: space-between; align-items: center; }
-        .footer-brand { color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; font-size: 14px; }
-        .footer-heart { color: #f87171; display: inline-block; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; margin-left: 20px; transition: color 0.2s; }
-        .footer-links a:hover { color: white; }
+        .footer-brand { color: var(--primary); font-weight: 700; letter-spacing: 0.5px; font-size: 13px; }
+        .footer-links a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            margin-left: 20px; 
+            transition: all 0.2s ease; 
+            font-size: 15px; 
+            display: inline-flex;
+            align-items: center;
+        }
+        .footer-links a:hover { color: var(--accent); transform: translateY(-2px); }
+        .footer-links .privacy-link { font-size: 13px; font-weight: 600; margin-left: 24px; }
 
         /* ===== UI Components ===== */
         .table-card { border: none; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; margin-top: 20px; }
@@ -293,6 +335,9 @@
         <main class="main-content">
             <header class="top-navbar">
                 <div class="page-breadcrumb">
+                    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle Sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
                     <i class="fas fa-home"></i>
                     <span style="color:#cbd5e1;">/</span>
                     <span style="color:#1e293b; font-weight:600;">
@@ -362,16 +407,13 @@
             <footer class="main-footer">
                 <div class="footer-content">
                     <div class="footer-left">
-                        <span class="footer-brand">Resto App</span> &copy; 2026. <span class="d-none d-md-inline">Sistem Manajemen Terpadu.</span>
+                        &copy; 2026 <span class="footer-brand">Resto App</span>. All rights reserved.
                     </div>
                     <div class="footer-right d-flex align-items-center">
-                        <div class="d-none d-lg-block me-3">
-                            Developed with <i class="fas fa-heart footer-heart"></i> for UAS Project
-                        </div>
                         <div class="footer-links">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-whatsapp"></i></a>
-                            <a href="#">Privacy</a>
+                            <a href="https://www.instagram.com/dwntie01?igsh=ZXg4aG91djh2eHYx" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://wa.me/6282181976863" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                            <a href="{{ url('/privacy') }}" class="privacy-link">Privacy Policy</a>
                         </div>
                     </div>
                 </div>
@@ -381,6 +423,26 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+            
+            // Simpan state di localStorage
+            if (sidebar.classList.contains('collapsed')) {
+                localStorage.setItem('sidebarState', 'collapsed');
+            } else {
+                localStorage.setItem('sidebarState', 'expanded');
+            }
+        }
+
+        // Terapkan state saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarState = localStorage.getItem('sidebarState');
+            if (sidebarState === 'collapsed') {
+                document.querySelector('.sidebar').classList.add('collapsed');
+            }
+        });
+
         function toggleProfile() {
             const dropdown = document.getElementById('profileDropdown');
             const chevron  = document.getElementById('profileChevron');

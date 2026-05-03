@@ -41,7 +41,6 @@ Route::middleware(['auth'])->group(function () {
         
         // Manajemen User
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
@@ -49,6 +48,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // ===== Privacy Policy =====
+    Route::get('/privacy', function () {
+        return view('privacy');
+    })->name('privacy');
 });
 
 require __DIR__.'/auth.php';

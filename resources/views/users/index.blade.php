@@ -49,7 +49,6 @@
                         <th class="ps-4" style="width:35%;">Pengguna</th>
                         <th>Email</th>
                         <th>Role Saat Ini</th>
-                        <th class="text-center">Ubah Role</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -79,26 +78,6 @@
                                 <span class="role-badge role-dapur"><i class="fas fa-fire-burner"></i> Dapur</span>
                             @else
                                 <span class="role-badge role-customer"><i class="fas fa-user"></i> Customer</span>
-                            @endif
-                        </td>
-
-                        <td class="text-center">
-                            @if($user->id !== auth()->id())
-                                <form action="{{ route('users.updateRole', $user->id) }}" method="POST" class="d-inline-flex align-items-center gap-2">
-                                    @csrf
-                                    @method('PATCH')
-                                    <select name="role" class="role-select">
-                                        <option value="customer" {{ $user->role === 'customer' ? 'selected' : '' }}>👤 Customer</option>
-                                        <option value="dapur"    {{ $user->role === 'dapur'    ? 'selected' : '' }}>👨‍🍳 Dapur</option>
-                                        <option value="admin"    {{ $user->role === 'admin'    ? 'selected' : '' }}>🛡️ Admin</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-sm" style="background:#1e3a5f; color:white; font-weight:700; border-radius:8px; padding:4px 12px;"
-                                        onclick="return confirm('Ubah role {{ $user->name }}?')">
-                                        Simpan
-                                    </button>
-                                </form>
-                            @else
-                                <span class="text-muted small">—</span>
                             @endif
                         </td>
 

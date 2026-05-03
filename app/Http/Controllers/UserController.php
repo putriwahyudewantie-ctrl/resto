@@ -13,20 +13,7 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    /**
-     * Admin bisa update role user (admin/customer/dapur)
-     */
-    public function updateRole(Request $request, User $user)
-    {
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'Tidak bisa mengubah role diri sendiri.');
-        }
 
-        $request->validate(['role' => 'required|in:admin,customer,dapur']);
-        $user->update(['role' => $request->role]);
-
-        return back()->with('success', "Role user {$user->name} berhasil diubah menjadi {$request->role}.");
-    }
 
     public function destroy(User $user)
     {
