@@ -84,7 +84,9 @@
 
                         <td class="text-center">
                             @if($user->id !== auth()->id())
-                                <form action="{{ route('users.updateRole', $user->id) }}" method="POST" class="d-inline-flex align-items-center gap-2">
+                                <form action="{{ route('users.updateRole', $user->id) }}" method="POST"
+                                    onsubmit="confirmRole(this, '{{ $user->name }}')"
+                                    class="d-inline-flex align-items-center gap-2">
                                     @csrf
                                     @method('PATCH')
                                     <select name="role" class="role-select">
@@ -92,8 +94,7 @@
                                         <option value="dapur"    {{ $user->role === 'dapur'    ? 'selected' : '' }}>👨‍🍳 Dapur</option>
                                         <option value="admin"    {{ $user->role === 'admin'    ? 'selected' : '' }}>🛡️ Admin</option>
                                     </select>
-                                    <button type="submit" class="btn btn-sm" style="background:#1e3a5f; color:white; font-weight:700; border-radius:8px; padding:4px 12px;"
-                                        onclick="return confirm('Ubah role {{ $user->name }}?')">
+                                    <button type="submit" class="btn btn-sm" style="background:#1e3a5f; color:white; font-weight:700; border-radius:8px; padding:4px 12px;">
                                         Simpan
                                     </button>
                                 </form>
@@ -105,7 +106,7 @@
                         <td class="text-center">
                             @if($user->id !== auth()->id())
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                    onsubmit="return confirm('Hapus user {{ $user->name }} secara permanen?')">
+                                    onsubmit="confirmDelete(this, '{{ $user->name }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger border-2 rounded-2" title="Hapus User">
@@ -125,5 +126,49 @@
         </div>
     </div>
 </div>
+
+{{-- SWEET ALERT --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmDelete(form, name) {
+    event.preventDefault();
+
+    Swal.fire({
+        title: 'Hapus User?',
+        html: `User <b>${name}</b> akan dihapus permanen`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e67e22',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        borderRadius: '16px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}
+
+function confirmRole(form, name) {
+    event.preventDefault();
+
+    Swal.fire({
+        title: 'Perbarui Akses Pengguna',
+html: `Yakin ingin mengubah akses untuk <b>${name}</b>?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#1e3a5f',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Ya, Simpan',
+        cancelButtonText: 'Batal',
+        borderRadius: '16px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}
+</script>
 
 @endsection
