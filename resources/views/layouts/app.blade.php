@@ -37,7 +37,19 @@
             height: 100vh; 
             z-index: 1000; 
             box-shadow: 4px 0 20px rgba(0,0,0,0.15); 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            white-space: nowrap;
         }
+        .sidebar.collapsed { width: 78px; padding: 28px 12px; }
+        .sidebar.collapsed .brand-name, 
+        .sidebar.collapsed .brand-sub, 
+        .sidebar.collapsed .nav-section, 
+        .sidebar.collapsed .nav-link span:not(.nav-icon) {
+            display: none;
+        }
+        .sidebar.collapsed .brand-box { justify-content: center; margin-bottom: 35px; padding: 0; gap: 0; }
+        .sidebar.collapsed .nav-link { justify-content: center; padding: 11px 0; }
         .brand-box { display: flex; align-items: center; gap: 12px; margin-bottom: 35px; padding: 0 6px; }
         .brand-icon { 
             width: 42px; height: 42px; 
@@ -66,7 +78,14 @@
         .nav-link .nav-icon { width: 20px; text-align: center; font-size: 15px; }
 
         /* ===== MAIN CONTENT ===== */
-        .main-content { flex: 1; display: flex; flex-direction: column; background: var(--bg-page); }
+        .main-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background: var(--bg-page); 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            min-width: 0;
+        }
         
         .top-navbar { 
             height: 68px; 
@@ -83,22 +102,45 @@
             display: flex; align-items: center; gap: 6px;
         }
         .top-navbar .page-breadcrumb i { color: var(--accent); }
+        .sidebar-toggle {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px;
+            margin-right: 15px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-toggle:hover { background: #f1f5f9; color: var(--primary); }
 
         .content-area { padding: 36px; flex: 1; }
         .main-footer { 
-            padding: 30px 36px; 
-            background: var(--bg-sidebar); 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            color: rgba(255,255,255,0.7); 
+            padding: 24px 36px; 
+            background: transparent; 
+            border-top: 1px solid var(--border); 
+            color: var(--text-muted); 
             font-size: 13px; 
             font-weight: 500;
+            margin-top: auto;
         }
         .footer-content { display: flex; justify-content: space-between; align-items: center; }
-        .footer-brand { color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; font-size: 14px; }
-        .footer-heart { color: #f87171; display: inline-block; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; margin-left: 20px; transition: color 0.2s; }
-        .footer-links a:hover { color: white; }
+        .footer-brand { color: var(--primary); font-weight: 700; letter-spacing: 0.5px; font-size: 13px; }
+        .footer-links a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            margin-left: 20px; 
+            transition: all 0.2s ease; 
+            font-size: 15px; 
+            display: inline-flex;
+            align-items: center;
+        }
+        .footer-links a:hover { color: var(--accent); transform: translateY(-2px); }
+        .footer-links .privacy-link { font-size: 13px; font-weight: 600; margin-left: 24px; }
 
         /* ===== UI Components ===== */
         .table-card { border: none; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; margin-top: 20px; }
@@ -206,6 +248,51 @@
             padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-top: 6px;
         }
         .badge-admin { background: #fef3c7; color: #92400e; }
+
+        /* ===== PREMIUM BUTTONS ===== */
+        .btn-resto-accent {
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white !important;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 24px;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+            text-decoration: none;
+        }
+        .btn-resto-accent:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.45);
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        .btn-resto-accent:active { transform: translateY(-1px); }
+        .btn-resto-accent i { font-size: 14px; }
+
+        .btn-resto-navy {
+            background: linear-gradient(135deg, #1e3a5f 0%, #162a44 100%);
+            color: white !important;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 24px;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.25);
+            text-decoration: none;
+        }
+        .btn-resto-navy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 58, 95, 0.35);
+            background: linear-gradient(135deg, #2c5282 0%, #1e3a5f 100%);
+        }
         .badge-customer { background: #ede9fe; color: #5b21b6; }
         .badge-dapur { background: #fce7f3; color: #9d174d; }
 
@@ -222,17 +309,34 @@
         .dropdown-action-link.danger:hover { background: #fff1f1; }
         .dropdown-action-link.danger i { color: #dc2626; }
 
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.5); z-index: 995; backdrop-filter: blur(2px);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
         @media (max-width: 991px) {
-            .sidebar { width: 72px; padding: 18px 8px; }
-            .sidebar .nav-link span:not(.nav-icon) { display: none; }
-            .brand-box span, .nav-section, .brand-sub { display: none; }
+            .sidebar { 
+                position: fixed; left: -280px; width: 270px; height: 100vh; z-index: 1000;
+                padding: 28px 18px; transition: left 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+            }
+            .sidebar.mobile-open { left: 0; }
+            /* Reset elements that were hidden in collapsed state */
+            .sidebar .nav-link span:not(.nav-icon) { display: inline-block; }
+            .brand-box span, .nav-section, .brand-sub { display: block; }
+            .sidebar .brand-box { justify-content: flex-start; padding: 0 6px; }
+            .sidebar .nav-link { justify-content: flex-start; }
+            
             .top-navbar { padding: 0 18px; }
             .content-area { padding: 18px; }
             .profile-info { display: none; }
+            .main-content { margin-left: 0; width: 100%; flex: 1; }
         }
     </style>
 </head>
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="app-wrapper">
         <aside class="sidebar">
             <div class="brand-box">
@@ -244,10 +348,13 @@
             </div>
 
             <div class="nav-section">Main Menu</div>
+            {{-- Dashboard hanya untuk Admin --}}
+            @if(Auth::user()->role === 'admin')
             <a href="{{ url('/dashboard') }}" class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}">
                 <span class="nav-icon"><i class="fas fa-th-large"></i></span>
                 <span>Dashboard</span>
             </a>
+            @endif
 
             {{-- Dapur hanya lihat pesanan --}}
             @if(Auth::user()->role === 'dapur')
@@ -256,18 +363,26 @@
                     <span>Pesanan Masuk</span>
                 </a>
             @else
-                <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
-                    <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
-                    <span>Reservasi</span>
-                </a>
                 <a href="{{ url('/meja') }}" class="nav-link {{ request()->is('meja*') ? 'active' : '' }}">
                     <span class="nav-icon"><i class="fas fa-chair"></i></span>
-                    <span>Meja</span>
+                    <span>Pesan Meja</span>
                 </a>
                 <a href="{{ url('/menu') }}" class="nav-link {{ request()->is('menu*') ? 'active' : '' }}">
                     <span class="nav-icon"><i class="fas fa-utensils"></i></span>
-                    <span>Menu</span>
+                    <span>Lihat Menu</span>
                 </a>
+                
+                @if(Auth::user()->role === 'admin')
+                <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-history"></i></span>
+                    <span>Data Reservasi</span>
+                </a>
+                @else
+                <a href="{{ url('/booking') }}" class="nav-link {{ request()->is('booking*') ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-receipt"></i></span>
+                    <span>Pesanan Saya</span>
+                </a>
+                @endif
             @endif
 
             {{-- User Management for Admin Only --}}
@@ -276,6 +391,10 @@
             <a href="{{ url('/users') }}" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
                 <span class="nav-icon"><i class="fas fa-users-cog"></i></span>
                 <span>User Management</span>
+            </a>
+            <a href="{{ route('reports.index') }}" class="nav-icon nav-link {{ request()->is('reports*') ? 'active' : '' }}">
+                <span class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                <span>Laporan Omzet</span>
             </a>
             @endif
 
@@ -293,12 +412,15 @@
         <main class="main-content">
             <header class="top-navbar">
                 <div class="page-breadcrumb">
+                    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle Sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
                     <i class="fas fa-home"></i>
                     <span style="color:#cbd5e1;">/</span>
                     <span style="color:#1e293b; font-weight:600;">
                         @php
                             $seg = Request::segment(1) ?? 'dashboard';
-                            $labels = ['dashboard' => 'Dashboard', 'booking' => 'Reservasi', 'menu' => 'Menu', 'meja' => 'Meja', 'users' => 'User Management', 'dapur' => 'Dapur – Pesanan Masuk', 'profile' => 'Profil Saya'];
+                            $labels = ['dashboard' => 'Dashboard', 'booking' => 'Data Reservasi', 'menu' => 'Daftar Menu', 'meja' => 'Manajemen Meja', 'users' => 'User Management', 'dapur' => 'Dapur – Pesanan Masuk', 'profile' => 'Profil Saya'];
                         @endphp
                         {{ $labels[$seg] ?? ucfirst($seg) }}
                     </span>
@@ -362,16 +484,13 @@
             <footer class="main-footer">
                 <div class="footer-content">
                     <div class="footer-left">
-                        <span class="footer-brand">Resto App</span> &copy; 2026. <span class="d-none d-md-inline">Sistem Manajemen Terpadu.</span>
+                        &copy; 2026 <span class="footer-brand">Resto App</span>. All rights reserved.
                     </div>
                     <div class="footer-right d-flex align-items-center">
-                        <div class="d-none d-lg-block me-3">
-                            Developed with <i class="fas fa-heart footer-heart"></i> for UAS Project
-                        </div>
                         <div class="footer-links">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-whatsapp"></i></a>
-                            <a href="#">Privacy</a>
+                            <a href="https://www.instagram.com/dwntie01?igsh=ZXg4aG91djh2eHYx" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="https://wa.me/6282181976863" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                            <a href="{{ url('/privacy') }}" class="privacy-link">Privacy Policy</a>
                         </div>
                     </div>
                 </div>
@@ -380,7 +499,104 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // SweetAlert2 Global Configuration & Overrides
+        document.addEventListener("DOMContentLoaded", function() {
+            const commonConfig = {
+                iconColor: '#e67e22',
+                showCancelButton: true,
+                confirmButtonColor: '#e67e22',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: '<i class="fas fa-check me-1"></i> Ya, Lanjutkan!',
+                cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
+                reverseButtons: true,
+                padding: '2.2rem',
+                width: '420px',
+                customClass: {
+                    popup: 'rounded-5 shadow-lg border-0',
+                    title: 'fw-bold text-navy',
+                    confirmButton: 'rounded-3 px-4 py-2',
+                    cancelButton: 'rounded-3 px-4 py-2'
+                }
+            };
+
+            // 1. Ganti semua onsubmit confirm menjadi SweetAlert
+            document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+                let match = form.getAttribute('onsubmit').match(/confirm\(['"](.+?)['"]\)/);
+                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan?";
+                form.removeAttribute('onsubmit');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        ...commonConfig,
+                        title: 'Konfirmasi Aksi',
+                        text: msg,
+                        icon: 'question',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            // 2. Ganti semua onclick confirm menjadi SweetAlert
+            document.querySelectorAll('a[onclick*="confirm"], button[onclick*="confirm"]').forEach(btn => {
+                let match = btn.getAttribute('onclick').match(/confirm\(['"](.+?)['"]\)/);
+                let msg = match ? match[1] : "Apakah Anda yakin untuk melanjutkan?";
+                btn.removeAttribute('onclick');
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    let form = btn.closest('form');
+                    Swal.fire({
+                        ...commonConfig,
+                        title: 'Konfirmasi Aksi',
+                        text: msg,
+                        icon: 'question',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if(form) {
+                                form.submit();
+                            } else if(btn.tagName.toLowerCase() === 'a' && btn.href) {
+                                window.location.href = btn.href;
+                            }
+                        }
+                    });
+                });
+            });
+        });
+
+        // Toggle functions
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth <= 991) {
+                // Mobile behavior: off-canvas
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            } else {
+                // Desktop behavior: push
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    localStorage.setItem('sidebarState', 'collapsed');
+                } else {
+                    localStorage.setItem('sidebarState', 'expanded');
+                }
+            }
+        }
+
+        // Terapkan state saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth > 991) {
+                const sidebarState = localStorage.getItem('sidebarState');
+                if (sidebarState === 'collapsed') {
+                    document.querySelector('.sidebar').classList.add('collapsed');
+                }
+            }
+        });
+
         function toggleProfile() {
             const dropdown = document.getElementById('profileDropdown');
             const chevron  = document.getElementById('profileChevron');
@@ -388,14 +604,58 @@
             chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
         }
         // Tutup kalau klik di luar
-        document.addEventListener('click', function(e) {
-            const container = document.getElementById('profileContainer');
+        window.addEventListener('click', function(e) {
+            const profileArea = document.getElementById('profileContainer');
             const dropdown = document.getElementById('profileDropdown');
-            if (!container.contains(e.target)) {
+            const chevron  = document.getElementById('profileChevron');
+            if (profileArea && !profileArea.contains(e.target)) {
                 dropdown.classList.remove('show');
-                document.getElementById('profileChevron').style.transform = 'rotate(0)';
+                chevron.style.transform = 'rotate(0)';
             }
         });
     </script>
+
+    {{-- Global Success/Error Alerts using SweetAlert --}}
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                iconColor: '#10b981',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                padding: '2rem',
+                customClass: { 
+                    popup: 'rounded-5 shadow-lg border-0',
+                    title: 'fw-bold text-success'
+                }
+            });
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Peringatan!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                iconColor: '#ef4444',
+                confirmButtonColor: '#e67e22',
+                confirmButtonText: 'Mengerti',
+                padding: '2rem',
+                customClass: { 
+                    popup: 'rounded-5 shadow-lg border-0',
+                    title: 'fw-bold text-danger',
+                    confirmButton: 'rounded-3 px-4 py-2'
+                }
+            });
+        });
+    </script>
+    @endif
 </body>
 </html>

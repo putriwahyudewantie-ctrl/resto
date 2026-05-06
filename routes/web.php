@@ -15,31 +15,46 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // ===== DAPUR – Pesanan Masuk (dapur + admin) =====
+    // ===== AKSES STAF (Admin + Dapur) =====
     Route::middleware(['dapur'])->group(function () {
         Route::get('/dapur/pesanan', [DapurController::class, 'pesanan'])->name('dapur.pesanan');
+        Route::patch('/booking/{id}/status', [BookingController::class, 'updateStatus']);
     });
 
-    // ===== Booking & Meja View (customer + admin) =====
+    // ===== AKSES UMUM (Customer + Admin + Dapur) =====
+    // Customer bisa melihat Booking, Meja, dan Menu
     Route::resource('booking', BookingController::class)->except(['destroy']);
     Route::get('/meja', [MejaController::class, 'index'])->name('meja.index');
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu.index'); // PINDAH KE SINI
 
-    // ===== Admin Only =====
+    // ===== KHUSUS ADMIN =====
     Route::middleware(['admin'])->group(function () {
+        // Admin bisa hapus & update status booking
         Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->name('booking.destroy');
-        Route::patch('/booking/{id}/status', [BookingController::class, 'updateStatus']);
 
-        Route::resource('menu', MenuController::class);
+        // Admin bisa mengelola data Menu (tambah, edit, hapus)
+        Route::resource('menu', MenuController::class)->except(['index']); 
+        
+        // Admin bisa mengelola data Meja
         Route::resource('meja', MejaController::class)->except(['index']);
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        
+        // Manajemen User
+        Route::resource('users', UserController::class)->except(['show']);
+        
+        // Laporan
+        Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/print', [\App\Http\Controllers\ReportController::class, 'print'])->name('reports.print');
     });
 
     // ===== Profile =====
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // ===== Privacy Policy =====
+    Route::get('/privacy', function () {
+        return view('privacy');
+    })->name('privacy');
 });
 
 require __DIR__.'/auth.php';

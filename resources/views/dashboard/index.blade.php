@@ -124,8 +124,8 @@
     </div>
     <div class="header-actions">
         @if(Auth::user()->role !== 'dapur')
-        <a href="{{ url('/booking/create') }}" class="btn btn-sm" style="background:#e67e22; color:white; font-weight:700; border-radius:10px; padding:9px 18px;">
-            <i class="fas fa-plus me-1"></i> Buat Booking
+        <a href="{{ url('/booking/create') }}" class="btn-resto-accent btn-sm py-2">
+            <i class="fas fa-plus"></i> Buat Booking
         </a>
         @endif
     </div>
@@ -248,12 +248,16 @@
                                     </td>
                                     <td><span class="badge bg-light text-dark border">Meja {{ $booking->nomor_meja }}</span></td>
                                     <td>
-                                        @if($booking->status === 'Dikonfirmasi' || $booking->status === 'Selesai')
-                                            <span class="badge bg-success-subtle text-success">Selesai</span>
-                                        @elseif($booking->status === 'Pending' || $booking->status === 'Menunggu' || $booking->status === 'Dibatalkan')
-                                            <span class="badge bg-warning text-dark px-2 py-1 shadow-sm"><i class="fas fa-clock me-1"></i>Pending</span>
+                                        @if($booking->status === 'Selesai')
+                                            <span class="badge bg-success text-white">Selesai</span>
+                                        @elseif($booking->status === 'Pending DP')
+                                            <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-circle me-1"></i>blm dp</span>
+                                        @elseif($booking->status === 'Pending')
+                                            <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>DP Lunas</span>
+                                        @elseif($booking->status === 'Dibatalkan')
+                                            <span class="badge bg-danger text-white">Dibatalkan</span>
                                         @else
-                                            <span class="badge bg-danger-subtle text-danger">Cancelled</span>
+                                            <span class="badge bg-secondary">{{ $booking->status }}</span>
                                         @endif
                                     </td>
                                     <td class="text-center">

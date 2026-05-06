@@ -9,23 +9,61 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->get();
+        $users = User::orderBy('role')->orderBy('name')->get();
         return view('users.index', compact('users'));
     }
 
-    /**
-     * Admin bisa update role user (admin/customer/dapur)
-     */
-    public function updateRole(Request $request, User $user)
+    public function create()
     {
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'Tidak bisa mengubah role diri sendiri.');
+        return view('users.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:admin,dapur,customer',
+        ]);
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => \Hash::make($validated['password']),
+            'role' => $validated['role'],
+        ]);
+
+        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
+    }
+
+    public function edit(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => 'required|in:admin,dapur,customer',
+        ]);
+
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = \Hash::make($validated['password']);
         }
 
-        $request->validate(['role' => 'required|in:admin,customer,dapur']);
-        $user->update(['role' => $request->role]);
+        $user->update($data);
 
-        return back()->with('success', "Role user {$user->name} berhasil diubah menjadi {$request->role}.");
+        return redirect()->route('users.index')->with('success', 'User berhasil diperbarui.');
     }
 
     public function destroy(User $user)

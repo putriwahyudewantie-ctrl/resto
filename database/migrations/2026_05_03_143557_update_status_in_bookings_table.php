@@ -9,13 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->string('status')->default('Pending')->after('catatan');
-            $table->integer('total_harga')->default(0)->after('status');
-        });
-    }
+    public function up()
+{
+    Schema::table('bookings', function (Blueprint $table) {
+        // Mengubah kolom status yang sudah ada menjadi enum dengan 4 opsi
+        $table->enum('status', ['pending_dp', 'pending', 'done', 'canceled'])
+              ->default('pending_dp')
+              ->change();
+    });
+}
 
     /**
      * Reverse the migrations.
@@ -23,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn(['status', 'total_harga']);
+            //
         });
     }
 };

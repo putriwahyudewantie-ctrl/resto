@@ -9,12 +9,8 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->after('id')->constrained('users')->onDelete('cascade');
-        });
-    }
+    
+}
 
     /**
      * Reverse the migrations.
@@ -22,7 +18,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('user_id');
+            //
         });
     }
 };

@@ -37,9 +37,11 @@
 @endif
 
 <div class="card table-card shadow-sm border-0">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold"><i class="fas fa-list me-2"></i>Daftar Pengguna Terdaftar</h5>
-        <span class="role-badge" style="background:#e67e22; color:white; border:none;">{{ count($users) }} Akun</span>
+    <div class="card-header d-flex justify-content-between align-items-center bg-white py-3">
+        <h5 class="mb-0 fw-bold text-navy"><i class="fas fa-users-cog me-2"></i>User Management</h5>
+        <a href="{{ route('users.create') }}" class="btn-resto-accent btn-sm py-2">
+            <i class="fas fa-user-plus"></i> Tambah User Baru
+        </a>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -48,8 +50,7 @@
                     <tr>
                         <th class="ps-4" style="width:35%;">Pengguna</th>
                         <th>Email</th>
-                        <th>Role Saat Ini</th>
-                        <th class="text-center">Ubah Role</th>
+                        <th>Role</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -64,7 +65,7 @@
                                 <div>
                                     <div class="fw-bold" style="color:#1e293b;">{{ $user->name }}</div>
                                     @if($user->id === auth()->id())
-                                        <span style="font-size:10px; color:#e67e22; font-weight:700;">● Anda</span>
+                                        <span style="font-size:10px; color:#e67e22; font-weight:700;">● Anda Sedang Login</span>
                                     @endif
                                 </div>
                             </div>
@@ -83,41 +84,26 @@
                         </td>
 
                         <td class="text-center">
-                            @if($user->id !== auth()->id())
-                                <form action="{{ route('users.updateRole', $user->id) }}" method="POST"
-                                    onsubmit="confirmRole(this, '{{ $user->name }}')"
-                                    class="d-inline-flex align-items-center gap-2">
-                                    @csrf
-                                    @method('PATCH')
-                                    <select name="role" class="role-select">
-                                        <option value="customer" {{ $user->role === 'customer' ? 'selected' : '' }}>👤 Customer</option>
-                                        <option value="dapur"    {{ $user->role === 'dapur'    ? 'selected' : '' }}>👨‍🍳 Dapur</option>
-                                        <option value="admin"    {{ $user->role === 'admin'    ? 'selected' : '' }}>🛡️ Admin</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-sm" style="background:#1e3a5f; color:white; font-weight:700; border-radius:8px; padding:4px 12px;">
-                                        Simpan
-                                    </button>
-                                </form>
-                            @else
-                                <span class="text-muted small">—</span>
-                            @endif
-                        </td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-outline-warning border-2 rounded-2" title="Edit User">
+                                    <i class="fas fa-edit"></i>
+                                </a>
 
-                        <td class="text-center">
-                            @if($user->id !== auth()->id())
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                    onsubmit="confirmDelete(this, '{{ $user->name }}')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger border-2 rounded-2" title="Hapus User">
-                                        <i class="fas fa-trash-alt"></i>
+                                @if($user->id !== auth()->id())
+                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                        onsubmit="return confirm('Hapus user {{ $user->name }} secara permanen?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-2 rounded-2" title="Hapus User">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <button class="btn btn-sm btn-light border-2 rounded-2 disabled" title="Tidak Bisa Hapus Diri Sendiri">
+                                        <i class="fas fa-trash-alt text-muted"></i>
                                     </button>
-                                </form>
-                            @else
-                                <span class="badge bg-secondary text-white">
-                                    <i class="fas fa-lock me-1"></i> (Anda)
-                                </span>
-                            @endif
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @endforeach
@@ -126,49 +112,5 @@
         </div>
     </div>
 </div>
-
-{{-- SWEET ALERT --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-function confirmDelete(form, name) {
-    event.preventDefault();
-
-    Swal.fire({
-        title: 'Hapus User?',
-        html: `User <b>${name}</b> akan dihapus permanen`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#e67e22',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: 'Ya, Hapus!',
-        cancelButtonText: 'Batal',
-        borderRadius: '16px'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.submit();
-        }
-    });
-}
-
-function confirmRole(form, name) {
-    event.preventDefault();
-
-    Swal.fire({
-        title: 'Perbarui Akses Pengguna',
-html: `Yakin ingin mengubah akses untuk <b>${name}</b>?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#1e3a5f',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: 'Ya, Simpan',
-        cancelButtonText: 'Batal',
-        borderRadius: '16px'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.submit();
-        }
-    });
-}
-</script>
 
 @endsection

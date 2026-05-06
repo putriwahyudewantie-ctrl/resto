@@ -19,11 +19,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             MenuSeeder::class,
-        ]);
-        
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            MejaSeeder::class,
         ]);
     }
 }

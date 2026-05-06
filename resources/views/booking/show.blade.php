@@ -131,7 +131,30 @@
             </div>
 
             <!-- Total Perhitungan Biaya -->
-            <div class="row justify-content-end mb-5 pe-3">
+            <!-- Total Perhitungan Biaya -->
+            <div class="row mb-5 pe-3">
+                
+                <!-- Kolom Kiri: Instruksi WA -->
+                <div class="col-sm-7 pe-md-4 mb-4 mb-sm-0 d-flex flex-column">
+                    @if($booking->dp > 0 && $booking->status == 'Pending DP')
+                        <div class="alert alert-info p-4 text-start shadow-sm d-print-none flex-grow-1" style="font-size: 0.95rem; border-radius: 16px; background-color: #f0f9ff; border: 1px solid #bae6fd;">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-info-circle me-3" style="font-size: 32px; color: #0284c7;"></i>
+                                <h5 class="fw-bold m-0" style="color: #0369a1;">Konfirmasi Pembayaran</h5>
+                            </div>
+                            <p class="mb-4 text-dark" style="line-height: 1.6;">
+                                Setelah melakukan transfer DP melalui QRIS di samping, Anda <strong>wajib</strong> mengkonfirmasi pembayaran dengan mengirimkan bukti transfer (screenshot) ke WhatsApp Admin agar pesanan Anda segera diproses.
+                            </p>
+                            <a href="https://wa.me/6281271716552?text=Halo%20Admin%2C%20saya%20ingin%20konfirmasi%20pembayaran%20DP%20untuk%20reservasi%20atas%20nama%20*{{ urlencode($booking->nama_pelanggan) }}*.%0ABerikut%20bukti%20transfernya%3A" target="_blank" class="btn btn-success w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 mb-2" style="border-radius: 12px; padding: 12px; background: #10b981; border: none;">
+                                <i class="fab fa-whatsapp" style="font-size: 22px;"></i> Konfirmasi via WhatsApp
+                            </a>
+                            <div class="text-center">
+                                <small class="text-muted fw-bold" style="font-size: 13px;"><i class="fas fa-headset me-1"></i> Admin: 0812-7171-6552</small>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
                 <div class="col-sm-5">
                     <div class="d-flex justify-content-between p-2">
                         <span class="text-secondary fw-bold" style="font-size:14px;">Total Keseluruhan</span>
@@ -165,12 +188,8 @@
                             <p class="text-muted small"></p>
                         </div>
 
-                        <hr style="border-top: 1px solid #eee;">
-                        
-                        <div class="alert alert-info py-2" style="font-size: 0.85rem;">
-                            <i class="fas fa-info-circle mr-1"></i> 
-                            Simpan tangkapan layar (screenshot) bukti transfer untuk divalidasi oleh kasir.
-                        </div>
+                        <hr style="border-top: 1px solid #eee; margin-top: 0;">
+                        <small class="text-muted"><i class="fas fa-camera"></i> Screenshot bagian ini jika perlu</small>
                     </div>
                     @endif
 

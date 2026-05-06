@@ -5,8 +5,8 @@
 <div class="container-fluid px-4">
 
     <div class="d-flex justify-content-end align-items-center mb-4">
-        <a href="{{ url('/booking/create') }}" class="btn shadow-sm px-4 rounded-pill" style="background:#e67e22; color:white; font-weight:700;">
-            <i class="fas fa-plus-circle me-2"></i>Tambah Reservasi
+        <a href="{{ url('/booking/create') }}" class="btn-resto-accent px-4 py-2">
+            <i class="fas fa-plus-circle"></i> Tambah Reservasi
         </a>
     </div>
 
@@ -114,22 +114,35 @@
 
                                 <td class="text-center">
                                     @if($booking->status == 'Selesai')
-                                        <span class="badge bg-success p-2 d-block w-100"><i class="fa fa-check-circle"></i> Selesai / Lunas</span>
-                                    @elseif($booking->status == 'Pending' || $booking->status == 'Dibatalkan')
-                                        <span class="badge bg-warning text-dark p-2 d-block w-100 shadow-sm mb-2"><i class="fa fa-clock"></i> Pending (Menunggu)</span>
-                                    @else
-                                        <span class="badge bg-warning text-dark p-2 d-block w-100 mb-2 shadow-sm">Menunggu Kedatangan</span>
-                                        
+                                        <span class="badge bg-success p-2 d-block w-100 shadow-sm"><i class="fa fa-check-circle"></i> Selesai </span>
+                                    @elseif($booking->status == 'Dibatalkan')
+                                        <span class="badge bg-danger p-2 d-block w-100 shadow-sm"><i class="fa fa-times-circle"></i> Dibatalkan</span>
+                                    @elseif($booking->status == 'Pending DP')
+                                        <span class="badge bg-warning text-dark p-2 d-block w-100 shadow-sm mb-2"><i class="fa fa-exclamation-circle"></i> blm dp</span>
+                                        @if(Auth::user()->role === 'admin')
+                                        <form action="{{ url('/booking/'.$booking->id.'/status') }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="Pending">
+                                            <button class="btn btn-success btn-sm w-100 fw-bold shadow-sm" onclick="return confirm('Konfirmasi bahwa DP sudah diterima/ditransfer pelanggan?')">
+                                                <i class="fa fa-check"></i> Konfirmasi DP
+                                            </button>
+                                        </form>
+                                        @endif
+                                    @elseif($booking->status == 'Pending')
+                                        <span class="badge bg-warning text-dark p-2 d-block w-100 mb-2 shadow-sm"><i class="fa fa-clock"></i> Pending </span>
                                         @if(Auth::user()->role === 'admin')
                                         <form action="{{ url('/booking/'.$booking->id.'/status') }}" method="POST">
                                             @csrf
                                             @method('PATCH')
                                             <input type="hidden" name="status" value="Selesai">
-                                            <button class="btn btn-primary btn-sm w-100 fw-bold shadow-sm" onclick="return confirm('Tandai tamu ini sudah selesai dan tagihan lunas?')">
+                                            <button class="btn btn-success btn-sm w-100 fw-bold shadow-sm" onclick="return confirm('Tandai tamu ini sudah selesai dan tagihan lunas?')">
                                                 Tandai Selesai
                                             </button>
                                         </form>
                                         @endif
+                                    @else
+                                        <span class="badge bg-secondary p-2 d-block w-100 shadow-sm">{{ $booking->status }}</span>
                                     @endif
                                 </td>
 
@@ -139,7 +152,7 @@
                                             <i class="fa fa-print"></i>
                                         </a>
                                         
-                                        @if($booking->status !== 'Selesai')
+                                        @if($booking->status !== 'Completed')
                                         <a href="{{ url('/booking/'.$booking->id.'/edit') }}"
                                            class="btn btn-warning btn-sm text-white d-flex align-items-center justify-content-center" style="width:32px; height:32px; padding:0;" title="Edit">
                                             <i class="fa fa-edit"></i>
