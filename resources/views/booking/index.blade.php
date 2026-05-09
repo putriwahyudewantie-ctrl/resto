@@ -152,7 +152,7 @@
                                             <i class="fa fa-print"></i>
                                         </a>
                                         
-                                        @if($booking->status !== 'Completed')
+                                        @if($booking->status !== 'Selesai')
                                         <a href="{{ url('/booking/'.$booking->id.'/edit') }}"
                                            class="btn btn-warning btn-sm text-white d-flex align-items-center justify-content-center" style="width:32px; height:32px; padding:0;" title="Edit">
                                             <i class="fa fa-edit"></i>

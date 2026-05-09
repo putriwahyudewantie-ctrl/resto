@@ -12,9 +12,9 @@ return new class extends Migration
     public function up()
 {
     Schema::table('bookings', function (Blueprint $table) {
-        // Mengubah kolom status yang sudah ada menjadi enum dengan 4 opsi
-        $table->enum('status', ['pending_dp', 'pending', 'done', 'canceled'])
-              ->default('pending_dp')
+        // Mengubah kolom status yang sudah ada menjadi string agar lebih fleksibel
+        $table->string('status')
+              ->default('Pending DP')
               ->change();
     });
 }
