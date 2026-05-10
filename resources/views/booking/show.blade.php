@@ -52,7 +52,11 @@
                 </div>
                 <div>
                     <h6 class="fw-bold m-0 text-secondary" style="font-size:12px; text-transform:uppercase; letter-spacing:1px;">Status Reservasi</h6>
-                    <h5 class="fw-bold m-0" style="color: {{ $booking->status == 'Selesai' ? '#10b981' : ($booking->status == 'Dibatalkan' ? '#ef4444' : '#f59e0b') }};">
+                    <h5 class="fw-bold m-0" @style([
+                        'color: #10b981' => $booking->status == 'Selesai',
+                        'color: #ef4444' => $booking->status == 'Dibatalkan',
+                        'color: #f59e0b' => !in_array($booking->status, ['Selesai', 'Dibatalkan'])
+                    ])>
                         {{ $booking->status ?? 'Menunggu Kedatangan' }}
                     </h5>
                 </div>

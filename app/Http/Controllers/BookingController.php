@@ -16,15 +16,17 @@ class BookingController extends Controller
         $query = Booking::orderBy('tanggal_booking', 'desc')
             ->orderBy('jam_booking', 'desc');
 
-        // Feature UAS: Search[cite: 1]
+        // Feature UAS: Search - Grouped to prevent security bypass for non-admins
         if ($request->has('search')) {
-            $query->where('nama_pelanggan', 'like', '%' . $request->search . '%')
+            $query->where(function($q) use ($request) {
+                $q->where('nama_pelanggan', 'like', '%' . $request->search . '%')
                   ->orWhere('no_hp', 'like', '%' . $request->search . '%')
                   ->orWhere('nomor_meja', 'like', '%' . $request->search . '%');
+            });
         }
 
-        // Admin bisa melihat semua, Customer hanya milik sendiri[cite: 1]
-        if (auth()->check() && auth()->user()->role !== 'admin') {
+        // Admin & Dapur bisa melihat semua, Customer hanya milik sendiri
+        if (auth()->check() && !in_array(auth()->user()->role, ['admin', 'dapur'])) {
             $query->where('user_id', auth()->id());
         }
 
@@ -41,7 +43,7 @@ class BookingController extends Controller
             })
             ->update(['status' => 'Dibatalkan']);
 
-        $bookings = $query->paginate(10);
+        $bookings = $query->paginate(10)->withQueryString();
         $allMenus = Menu::pluck('nama_menu', 'id');
 
         return view('booking.index', compact('bookings', 'allMenus'));
@@ -117,7 +119,7 @@ class BookingController extends Controller
             ->where('nomor_meja', $validated['nomor_meja'])
             ->where(function ($query) use ($jamBatasBawah, $jamMasuk) {
                 $query->whereBetween('jam_booking', [$jamBatasBawah, $jamMasuk->copy()->addHours(1)->addMinutes(59)->format('H:i')]);
-            })->where('status', '!=', 'Selesai')
+            })->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->first();
 
         if ($cekBooking) {
@@ -170,7 +172,7 @@ class BookingController extends Controller
     {
         $booking = Booking::findOrFail($id);
         
-        if (auth()->user()->role !== 'admin' && $booking->user_id !== auth()->id()) {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'dapur' && $booking->user_id !== auth()->id()) {
             abort(403);
         }
 
@@ -234,6 +236,11 @@ class BookingController extends Controller
             }
         }
 
+        $meja = Meja::where('no_meja', $validated['nomor_meja'])->first();
+        if (!$meja || $validated['jumlah_orang'] > $meja->kapasitas) {
+            return back()->withInput()->with('error', 'Meja tidak memadai untuk kapasitas tersebut.');
+        }
+
         $jamBatasBawah = $jamMasuk->copy()->subHours(2)->format('H:i');
 
         $cekBooking = Booking::where('tanggal_booking', $validated['tanggal_booking'])
@@ -241,7 +248,7 @@ class BookingController extends Controller
             ->where('id', '!=', $id)
             ->where(function ($query) use ($jamBatasBawah, $jamMasuk) {
                 $query->whereBetween('jam_booking', [$jamBatasBawah, $jamMasuk->copy()->addHours(1)->addMinutes(59)->format('H:i')]);
-            })->where('status', '!=', 'Selesai')
+            })->whereNotIn('status', ['Selesai', 'Dibatalkan'])
             ->first();
 
         if ($cekBooking) {

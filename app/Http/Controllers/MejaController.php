@@ -38,8 +38,8 @@ class MejaController extends Controller
                         $query->whereBetween('jam_booking', [$jamBatasBawah, $jamBatasAtas]);
                     })
                     ->where(function($q) {
-                        $q->whereNull('status');
-                        $q->orWhere('status', '!=', 'Selesai');
+                        $q->whereNotIn('status', ['Selesai', 'Dibatalkan'])
+                          ->orWhereNull('status');
                     })
                     ->pluck('nomor_meja')->toArray();
             }

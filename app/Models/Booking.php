@@ -19,6 +19,7 @@ class Booking extends Model
         'status',
         'total_harga',
         'dp',
+        'kode_pembayaran',
     ];
 
     protected $casts = [
