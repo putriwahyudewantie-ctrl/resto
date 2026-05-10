@@ -5,20 +5,20 @@
 <h2 class="page-title mb-4">✏️ Form Edit Booking</h2>
 
 @if(session('error'))
-    <div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius:12px;">
-        <span class="fw-bold px-2">🚨 Oops!</span> {{ session('error') }}
-    </div>
+<div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius:12px;">
+    <span class="fw-bold px-2">🚨 Oops!</span> {{ session('error') }}
+</div>
 @endif
 
 @if($errors->any())
-    <div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius:12px;">
-        <span class="fw-bold px-2">🚨 Silakan periksa kembali:</span>
-        <ul class="mb-0 mt-2">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+<div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius:12px;">
+    <span class="fw-bold px-2">🚨 Silakan periksa kembali:</span>
+    <ul class="mb-0 mt-2">
+        @foreach($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
 
 <div class="card table-card p-2 bg-white rounded-4 shadow-sm border-0">
@@ -76,9 +76,9 @@
                         <label class="form-label text-secondary fw-semibold">Pilih Meja</label>
                         <select name="nomor_meja" class="form-select bg-white fw-bold text-primary">
                             @foreach($mejas as $meja)
-                                <option value="{{ $meja->no_meja }}" {{ old('nomor_meja', $booking->nomor_meja) == $meja->no_meja ? 'selected' : '' }}>
-                                    No. {{ $meja->no_meja }} (Maks {{ $meja->kapasitas }} org)
-                                </option>
+                            <option value="{{ $meja->no_meja }}" {{ old('nomor_meja', $booking->nomor_meja) == $meja->no_meja ? 'selected' : '' }}>
+                                No. {{ $meja->no_meja }} (Maks {{ $meja->kapasitas }} org)
+                            </option>
                             @endforeach
                         </select>
                         <small class="text-warning mt-1 d-block"><i class="fa fa-info-circle"></i> Pastikan meja tidak bentrok di jam yang sama.</small>
@@ -96,73 +96,90 @@
                         <small class="text-muted">Anda dapat menambah atau mengurangi porsi di sini.</small>
                     </div>
                 </div>
-                
+
                 <div class="row g-3" style="max-height: 500px; overflow-y: auto; overflow-x: hidden; padding: 10px; background: #f8fafc; border-radius:18px; border: 1px solid #e2e8f0;">
                     @forelse($menus as $menu)
-                        @php
-                            // Parsing logika JSON E-Commerce lama dari database
-                            $currentQty = 0;
-                            $pesanans = is_array($booking->menu) ? $booking->menu : [];
-                            foreach($pesanans as $p) {
-                                if (is_array($p) && isset($p['id']) && $p['id'] == $menu->id) {
-                                    $currentQty = $p['qty'];
-                                    break;
-                                } elseif (!is_array($p) && $p == $menu->id) {
-                                    $currentQty = 1; // Fallback data lama (checkbox array ID flat)
-                                    break;
-                                }
-                            }
-                            $oldQty = old('menu.'.$menu->id, $currentQty);
-                        @endphp
-                        <div class="col-lg-3 col-md-4 col-sm-6">
-                            <div class="card h-100 border-0 shadow-sm" id="menu_card_{{ $menu->id }}" style="position: relative; border-radius:14px; transition: all 0.2s ease; overflow:hidden; {{ $oldQty > 0 ? 'background: #f0f7ff; box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; transform: translateY(-4px);' : 'background: #fff;' }}">
-                                
-                                <input type="hidden" name="menu[{{ $menu->id }}]" id="qty_input_{{ $menu->id }}" value="{{ $oldQty }}" data-harga="{{ $menu->harga }}">
+                    @php
+                    // Parsing logika JSON E-Commerce lama dari database
+                    $currentQty = 0;
+                    $pesanans = is_array($booking->menu) ? $booking->menu : [];
+                    foreach($pesanans as $p) {
+                    if (is_array($p) && isset($p['id']) && $p['id'] == $menu->id) {
+                    $currentQty = $p['qty'];
+                    break;
+                    } elseif (!is_array($p) && $p == $menu->id) {
+                    $currentQty = 1; // Fallback data lama (checkbox array ID flat)
+                    break;
+                    }
+                    }
+                    $oldQty = old('menu.'.$menu->id, $currentQty);
+                    @endphp
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card h-100 border-0 shadow-sm" id="menu_card_{{ $menu->id }}" 
+                            @style([
+                                'position: relative',
+                                'border-radius:14px',
+                                'transition: all 0.2s ease',
+                                'overflow:hidden',
+                                'background: #f0f7ff; box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; transform: translateY(-4px)' => $oldQty > 0,
+                                'background: #fff' => !($oldQty > 0)
+                            ])>
 
-                                <!-- Gambar -->
-                                <div style="position:relative; width: 100%; padding-top: 65%;">
-                                    <img src="{{ asset('images/menu/' . $menu->gambar) }}" class="card-img-top" alt="{{ $menu->nama_menu }}"
-                                         style="position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; transition: all 0.2s ease; {{ $oldQty > 0 ? 'opacity: 0.85;' : '' }}"
-                                         id="menu_img_{{ $menu->id }}"
-                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->nama_menu) }}&background=0f2f66&color=fff&size=200&bold=true';">
-                                    <div style="position:absolute; bottom:0; left:0; width:100%; height:40%; background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);"></div>
-                                    <span class="badge position-absolute shadow-sm" style="bottom: 10px; left: 10px; background: rgba(255,255,255,0.9); color: #0f2f66; font-weight:700;">{{ $menu->kategori }}</span>
+                            <input type="hidden" name="menu[{{ $menu->id }}]" id="qty_input_{{ $menu->id }}" value="{{ $oldQty }}" data-harga="{{ $menu->harga }}">
+
+                            <!-- Gambar -->
+                            <div style="position:relative; width: 100%; padding-top: 65%;">
+                                <img src="{{ asset('images/menu/' . $menu->gambar) }}" class="card-img-top" alt="{{ $menu->nama_menu }}"
+                                    @style([
+                                        'position: absolute',
+                                        'top:0',
+                                        'left:0',
+                                        'width: 100%',
+                                        'height: 100%',
+                                        'object-fit: cover',
+                                        'transition: all 0.2s ease',
+                                        'opacity: 0.85' => $oldQty > 0
+                                    ])
+                                    id="menu_img_{{ $menu->id }}"
+                                    onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($menu->nama_menu) }}&background=0f2f66&color=fff&size=200&bold=true';">
+                                <div style="position:absolute; bottom:0; left:0; width:100%; height:40%; background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);"></div>
+                                <span class="badge position-absolute shadow-sm" style="bottom: 10px; left: 10px; background: rgba(255,255,255,0.9); color: #0f2f66; font-weight:700;">{{ $menu->kategori }}</span>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="card-body p-3 d-flex flex-column justify-content-between" style="background: transparent;">
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="color: #0f2f66; font-size:15px; line-height:1.3;">{{ $menu->nama_menu }}</h6>
+                                    <p class="text-muted mb-2" style="font-size:12px; line-height:1.4;">{{ \Illuminate\Support\Str::limit($menu->deskripsi, 40) }}</p>
                                 </div>
-                                
-                                <!-- Body -->
-                                <div class="card-body p-3 d-flex flex-column justify-content-between" style="background: transparent;">
-                                    <div>
-                                        <h6 class="fw-bold mb-1" style="color: #0f2f66; font-size:15px; line-height:1.3;">{{ $menu->nama_menu }}</h6>
-                                        <p class="text-muted mb-2" style="font-size:12px; line-height:1.4;">{{ \Illuminate\Support\Str::limit($menu->deskripsi, 40) }}</p>
+
+                                <!-- Harga & Tombol QTY Counter (+ / -) -->
+                                <div class="d-flex justify-content-between align-items-center mt-2 border-top pt-2">
+                                    <div class="fw-bold" style="color: #059669; font-size:14px;">
+                                        Rp {{ number_format($menu->harga, 0, ',', '.') }}
                                     </div>
-                                    
-                                    <!-- Harga & Tombol QTY Counter (+ / -) -->
-                                    <div class="d-flex justify-content-between align-items-center mt-2 border-top pt-2">
-                                        <div class="fw-bold" style="color: #059669; font-size:14px;">
-                                            Rp {{ number_format($menu->harga, 0, ',', '.') }}
-                                        </div>
-                                        <div class="d-flex align-items-center rounded-pill border shadow-sm" style="background:#fff; border-color:#e2e8f0;">
-                                            <button type="button" class="btn btn-sm fw-bold d-flex align-items-center justify-content-center" 
-                                                    style="width:28px; height:28px; padding:0; border:none; background:transparent; color:#64748b; font-size:16px;" 
-                                                    onclick="updateQty({{ $menu->id }}, -1)">−</button>
-                                            
-                                            <span class="fw-bold fs-6 mx-1 text-center" style="min-width: 22px; color:#0f2f66;" id="qty_display_{{ $menu->id }}">
-                                                {{ $oldQty }}
-                                            </span>
-                                            
-                                            <button type="button" class="btn btn-sm fw-bold d-flex align-items-center justify-content-center" 
-                                                    style="width:28px; height:28px; padding:0; border:none; background:transparent; color:#3b82f6; font-size:16px;" 
-                                                    onclick="updateQty({{ $menu->id }}, 1)">+</button>
-                                        </div>
+                                    <div class="d-flex align-items-center rounded-pill border shadow-sm" style="background:#fff; border-color:#e2e8f0;">
+                                        <button type="button" class="btn btn-sm fw-bold d-flex align-items-center justify-content-center"
+                                            style="width:28px; height:28px; padding:0; border:none; background:transparent; color:#64748b; font-size:16px;"
+                                            onclick="updateQty('{{ $menu->id }}', -1)">−</button>
+
+                                        <span class="fw-bold fs-6 mx-1 text-center" style="min-width: 22px; color:#0f2f66;" id="qty_display_{{ $menu->id }}">
+                                            {{ $oldQty }}
+                                        </span>
+
+                                        <button type="button" class="btn btn-sm fw-bold d-flex align-items-center justify-content-center"
+                                            style="width:28px; height:28px; padding:0; border:none; background:transparent; color:#3b82f6; font-size:16px;"
+                                            onclick="updateQty('{{ $menu->id }}', 1)">+</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     @empty
-                        <div class="col-12 py-5 text-center">
-                            <h1 style="opacity:0.2;">🍽️</h1>
-                            <p class="text-muted mb-0">Wah, admin belum menambahkan data menu apa-apa di database.</p>
-                        </div>
+                    <div class="col-12 py-5 text-center">
+                        <h1 style="opacity:0.2;">🍽️</h1>
+                        <p class="text-muted mb-0">Wah, admin belum menambahkan data menu apa-apa di database.</p>
+                    </div>
                     @endforelse
                 </div>
             </div>
@@ -178,7 +195,7 @@
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius:12px 0 0 12px; font-weight:600;">Rp</span>
                         <input type="number" name="dp" id="dp_input" class="form-control fw-bold" placeholder="100000" value="{{ old('dp', $booking->dp) }}" min="100000" required
-                               style="border-radius:0 12px 12px 0; background:#fff9f9; color:#b91c1c; border: 1px solid #fecaca;">
+                            style="border-radius:0 12px 12px 0; background:#fff9f9; color:#b91c1c; border: 1px solid #fecaca;">
                     </div>
                     <div class="alert alert-danger mt-3 p-3 border-0 shadow-sm" style="font-size:13px; border-radius:12px; background:#fff1f2; color:#be123c; line-height: 1.6;">
                         <strong>⚠️ Update Pembayaran:</strong> <br>
@@ -225,16 +242,16 @@
         let display = document.getElementById('qty_display_' + id);
         let card = document.getElementById('menu_card_' + id);
         let img = document.getElementById('menu_img_' + id);
-        
+
         let currentQty = parseInt(input.value) || 0;
         let newQty = currentQty + change;
-        
+
         if (newQty < 0) newQty = 0;
         if (newQty > 100) newQty = 100;
-        
+
         input.value = newQty;
         display.innerText = newQty;
-        
+
         if (newQty > 0) {
             card.style.background = '#f0f7ff';
             card.style.transform = 'translateY(-4px)';
@@ -243,7 +260,7 @@
         } else {
             card.style.background = '#fff';
             card.style.transform = 'translateY(0)';
-            card.style.boxShadow = '0 .125rem .25rem a(0,0,0,.075)';
+            card.style.boxShadow = '0 .125rem .25rem rgba(0,0,0,.075)';
             img.style.opacity = '1';
         }
 
@@ -264,7 +281,7 @@
 
         let dpInput = document.getElementById('dp_input');
         let dp = parseInt(dpInput.value) || 0;
-        
+
         let sisa = totalMenuDuit - dp;
         if (sisa < 0) sisa = 0;
 

@@ -16,10 +16,12 @@ class DashboardController extends Controller
 
         // ===== Core Admin Stats =====
         $totalMenu          = Menu::count();
-        $bookingHariIni     = Booking::where('tanggal_booking', $today->toDateString())->count();
+        $bookingHariIni     = Booking::where('tanggal_booking', $today->toDateString())
+                                ->where('status', '!=', 'Dibatalkan')->count();
         $mejaDipakaiHariIni = Booking::where('tanggal_booking', $today->toDateString())
+                                ->where('status', '!=', 'Dibatalkan')
                                 ->distinct('nomor_meja')->count('nomor_meja');
-        $totalOmzet         = Booking::where('status', '!=', 'Dibatalkan')->sum('dp');
+        $totalOmzet         = Booking::whereNotIn('status', ['Dibatalkan', 'Pending DP'])->sum('dp');
 
         // ===== Earnings Breakdown =====
         $kemarin    = $today->copy()->subDay();
@@ -32,18 +34,18 @@ class DashboardController extends Controller
         $endTahun    = $today->copy()->endOfYear();
 
         $omzetKemarin   = Booking::where('tanggal_booking', $kemarin->toDateString())
-                            ->where('status', '!=', 'Dibatalkan')->sum('dp');
+                            ->whereNotIn('status', ['Dibatalkan', 'Pending DP'])->sum('dp');
         $omzetHariIni   = Booking::where('tanggal_booking', $today->toDateString())
-                            ->where('status', '!=', 'Dibatalkan')->sum('dp');
-        // "Besok" = estimasi booking yang sudah diinput untuk besok
+                            ->whereNotIn('status', ['Dibatalkan', 'Pending DP'])->sum('dp');
+        // "Besok" = estimasi booking yang sudah diinput (minimal bayar DP) untuk besok
         $omzetBesok     = Booking::where('tanggal_booking', $besok->toDateString())
-                            ->where('status', '!=', 'Dibatalkan')->sum('dp');
+                            ->whereNotIn('status', ['Dibatalkan', 'Pending DP'])->sum('dp');
         $omzetMingguIni = Booking::whereBetween('tanggal_booking', [$startMinggu, $endMinggu])
-                            ->where('status', '!=', 'Dibatalkan')->sum('dp');
+                            ->whereNotIn('status', ['Dibatalkan', 'Pending DP'])->sum('dp');
         $omzetBulanIni  = Booking::whereBetween('tanggal_booking', [$startBulan, $endBulan])
-                            ->where('status', '!=', 'Dibatalkan')->sum('dp');
+                            ->whereNotIn('status', ['Dibatalkan', 'Pending DP'])->sum('dp');
         $omzetTahunIni  = Booking::whereBetween('tanggal_booking', [$startTahun, $endTahun])
-                            ->where('status', '!=', 'Dibatalkan')->sum('dp');
+                            ->whereNotIn('status', ['Dibatalkan', 'Pending DP'])->sum('dp');
 
         // ===== Booking Lists =====
         $bookingTerbaru = Booking::orderBy('created_at', 'desc')->take(5)->get();

@@ -249,16 +249,20 @@
                                     <td><span class="badge bg-light text-dark border">Meja {{ $booking->nomor_meja }}</span></td>
                                     <td>
                                         @if($booking->status === 'Selesai')
-                                            <span class="badge bg-success text-white">Selesai</span>
-                                        @elseif($booking->status === 'Pending DP')
-                                            <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-circle me-1"></i>blm dp</span>
-                                        @elseif($booking->status === 'Pending')
-                                            <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>DP Lunas</span>
-                                        @elseif($booking->status === 'Dibatalkan')
-                                            <span class="badge bg-danger text-white">Dibatalkan</span>
-                                        @else
-                                            <span class="badge bg-secondary">{{ $booking->status }}</span>
-                                        @endif
+    <span class="badge bg-success text-white">Selesai</span>
+@elseif($booking->status === 'Pending DP')
+    <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-circle me-1"></i>Belum Bayar DP</span>
+@elseif($booking->status === 'Pending')
+    <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>DP Lunas</span>
+@elseif($booking->status === 'Dibatalkan')
+    <span class="badge bg-danger text-white">Dibatalkan</span>
+@elseif($booking->status === 'Cooking')
+    <span class="badge bg-info text-white">Cooking</span>
+@elseif($booking->status === 'Ready')
+    <span class="badge bg-success text-white">Ready</span>
+@else
+    <span class="badge bg-secondary">{{ $booking->status }}</span>
+@endif
                                     </td>
                                     <td class="text-center">
                                         <a href="{{ url('/booking/'.$booking->id) }}" class="btn btn-sm btn-light border">Detail</a>
